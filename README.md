@@ -44,7 +44,9 @@ pixi run check        # format, lint, and check the config against the platform
 pixi run dnabarcode-culicidae-evaluate   # one of the pipeline stages
 ```
 
-The pipeline reads and writes `data/` (never committed). Releasing and
+The pipeline reads and writes `data/` (never committed). If that folder
+moves, run `scripts/relocate_mlflow.py` to update the absolute paths MLflow
+stores. Releasing and
 operating the live service: [`docs/releasing-dnabarcode.md`](docs/releasing-dnabarcode.md).
 
 ## Model cards
