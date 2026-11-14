@@ -134,6 +134,9 @@ deployed from the `prokoptonml` repository. It moved to its own repository
 (installing the platform from PyPI) and then to this project, so that the
 `prokoptonml` project holds only the platform's own services.
 
-The local `data/` folder (bundles and the MLflow registry) stays in the
-`prokoptonml` working copy for now and is linked from this one
-(`ln -s ../prokoptonml/data data`), because MLflow records absolute paths.
+The local `data/` folder (raw and processed data, bundles and the MLflow
+registry) was then moved into this working copy. MLflow records absolute
+paths, so they were rewritten with `scripts/relocate_mlflow.py` (which backs
+up the database first). The next step is to keep MLflow's artifacts and
+database off the laptop (a Cloud Storage bucket or a hosted MLflow), so no
+folder path matters.
