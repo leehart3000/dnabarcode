@@ -19,7 +19,7 @@
   // Not secret. Secrets (API_KEY, TURNSTILE_SECRET) are set with
   // `wrangler secret put` and never stored in the repository.
   "vars": {
-    "API_URL": "https://dnabarcode-api-bb2c2tivta-nw.a.run.app",
+    "API_URL": "https://dnabarcode-api-3flajgbs3a-nw.a.run.app",
     "EXPECTED_HOSTNAME": "dnabarcode.org",
     "TURNSTILE_ACTION": "identify"
   },
