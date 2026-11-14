@@ -85,6 +85,13 @@ for (const [path, title] of PAGES) {
   });
 }
 
+test("the footer shows the site version", async ({ page }) => {
+  await page.goto("/scope");
+  await expect(page.locator("footer [data-version]")).toHaveText(
+    /^(development|\d+\.\d+\.\d+[^/\s]*\/[0-9a-f]{7})$/,
+  );
+});
+
 test("the navigation marks the current page", async ({ page }) => {
   await fakeService(page, (route) => route.abort());
   await page.goto("/");

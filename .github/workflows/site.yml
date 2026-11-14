@@ -1,9 +1,9 @@
 name: Site
 
 # DNAbarcode.org: unit tests of the gateway and page scripts on every change
-# to sites/, and browser tests of the live site on demand (run them after
-# each site deploy: gh workflow run site.yml) and weekly, to catch changes
-# outside the repository (Cloudflare, Cloud Run, certificates).
+# to sites/, and browser tests of the live site after each release (called by
+# the Release workflow), on demand (gh workflow run site.yml) and weekly, to
+# catch changes outside the repository (Cloudflare, Cloud Run, certificates).
 on:
   pull_request:
     paths: ["sites/**", ".github/workflows/site.yml"]
@@ -13,6 +13,11 @@ on:
   schedule:
     - cron: "17 6 * * 1" # Mondays
   workflow_dispatch:
+  workflow_call: # From the Release workflow, after a deploy
+    inputs:
+      live:
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -20,7 +25,7 @@ permissions:
 jobs:
   unit:
     name: Unit tests
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    if: (github.event_name == 'pull_request' || github.event_name == 'push') && !inputs.live
     runs-on: ubuntu-24.04 # Pinned; move to a newer image on purpose
     timeout-minutes: 10
     steps:
@@ -38,7 +43,7 @@ jobs:
 
   live:
     name: Browser tests of the live site
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: inputs.live || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04 # Pinned; move to a newer image on purpose
     timeout-minutes: 20
     defaults:

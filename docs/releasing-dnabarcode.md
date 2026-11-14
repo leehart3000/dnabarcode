@@ -8,8 +8,27 @@ prints a secret.
 | Part | Where it runs | How it is deployed |
 |---|---|---|
 | Models and references (the bundle) | Built locally | Uploaded to `gs://dnabarcode-bundles/<date>/` |
-| API | Cloud Run `dnabarcode-api`, project `dnabarcode`, `europe-west2` | `.github/workflows/deploy-dnabarcode.yml` (by hand, from `main`) |
-| Website and gateway | Cloudflare Worker `dnabarcode-site` | `wrangler deploy` from a Mac |
+| API | Cloud Run `dnabarcode-api`, project `dnabarcode`, `europe-west2` | A release (`v*` tag), or `deploy-dnabarcode.yml` by hand from `main` |
+| Website and gateway | Cloudflare Worker `dnabarcode-site` | A release (`v*` tag), or `wrangler deploy` from a Mac |
+
+## 0. Make a release
+
+Releases are numbered `vMAJOR.MINOR.PATCH`. Tagging a commit on `main`
+starts `.github/workflows/release.yml`, which deploys the API, deploys the
+website and gateway with the version in the footer (`1.0.0/8fdab8a`), runs
+the browser tests against the live site and records a GitHub Release with
+the version, bundle and platform version. Tags are permanent (the "Protect
+release tags" ruleset), so a fix is always a new version.
+
+```bash
+git switch main && git pull
+git tag -a v1.0.1 -m "DNAbarcode.org 1.0.1"
+git push origin v1.0.1
+gh run watch "$(gh run list --workflow=release.yml --limit 1 --json databaseId --jq '.[0].databaseId')" --exit-status
+```
+
+The Cloudflare token used by the release lives only in the `production`
+environment, which only `v*` tags can use.
 
 ## 1. Release a new bundle (new models or reference data)
 
@@ -37,7 +56,7 @@ prints a secret.
 4. In a pull request, set `BUNDLE=` in `infra/deploy/dnabarcode.env` to the
    new folder. If answers are expected to change, update or add known-answer
    checks in `apps/dnabarcode/checks/`.
-5. After merging, deploy and watch:
+5. After merging, make a release (section 0), or deploy only the API and watch:
 
    ```bash
    gh workflow run deploy-dnabarcode.yml --ref main -f check_public=true
@@ -53,10 +72,13 @@ prints a secret.
 
 1. Change `sites/dnabarcode/` in a pull request (the unit tests run in CI).
    Optionally run the browser tests against a local preview first.
-2. After merging, deploy and test:
+2. After merging, make a release (section 0). To deploy by hand instead
+   (the footer then shows, for example, `1.0.0+2/8fdab8a`):
 
    ```bash
+   sites/dnabarcode/scripts/stamp-version.sh
    npx --yes wrangler@4.162.0 deploy --config sites/dnabarcode/wrangler.jsonc
+   git restore sites/dnabarcode/public
    gh workflow run site.yml --ref main
    ```
 
