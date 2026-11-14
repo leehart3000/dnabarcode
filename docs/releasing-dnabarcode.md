@@ -1,13 +1,14 @@
 # Releasing and operating DNAbarcode.org
 
 Step-by-step guides for the common jobs. Commands run from the repository
-root on a Mac with `pixi`, `gcloud` (signed in as the project owner), `gh`
-and Node 22+. Nothing here prints a secret.
+root on a Mac with `pixi`, `gcloud` (signed in as the project owner, with
+`gcloud config set project dnabarcode`), `gh` and Node 22+. Nothing here
+prints a secret.
 
 | Part | Where it runs | How it is deployed |
 |---|---|---|
-| Models and references (the bundle) | Built locally | Uploaded to `gs://prokoptonml-bundles/dnabarcode/<date>/` |
-| API | Cloud Run `dnabarcode-api`, `europe-west2` | `.github/workflows/deploy-dnabarcode.yml` (by hand, from `main`) |
+| Models and references (the bundle) | Built locally | Uploaded to `gs://dnabarcode-bundles/<date>/` |
+| API | Cloud Run `dnabarcode-api`, project `dnabarcode`, `europe-west2` | `.github/workflows/deploy-dnabarcode.yml` (by hand, from `main`) |
 | Website and gateway | Cloudflare Worker `dnabarcode-site` | `wrangler deploy` from a Mac |
 
 ## 1. Release a new bundle (new models or reference data)
@@ -30,7 +31,7 @@ and Node 22+. Nothing here prints a secret.
    ```bash
    pixi run dnabarcode-bundle
    gcloud storage rsync data/models/dnabarcode/bundle \
-       gs://prokoptonml-bundles/dnabarcode/<YYYY-MM-DD> --recursive
+       gs://dnabarcode-bundles/<YYYY-MM-DD> --recursive
    ```
 
 4. In a pull request, set `BUNDLE=` in `infra/deploy/dnabarcode.env` to the
@@ -106,6 +107,7 @@ npx --yes wrangler@4.162.0 tail --config sites/dnabarcode/wrangler.jsonc
   zero). Settings in `infra/deploy/dnabarcode.env`.
 - Firewall rate limit: 5 identifications per 10 seconds per IP (Cloudflare
   dashboard); every identification also needs a Turnstile token.
-- Budget alert: £10 a month on the Google Cloud project.
+- Budget: £10 a month on the `dnabarcode` project (alerts), plus a £10
+  Cloud Run spend cap.
 - Storage: old bundles and images are cleaned up as described in
   [`infra/gcp/README.md`](../infra/gcp/README.md).

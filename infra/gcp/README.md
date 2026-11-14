@@ -1,184 +1,138 @@
 # Google Cloud setup
 
-How the Google Cloud resources for ProkoptonML were created, so they can be
-checked or rebuilt. Commands are run once, by hand, from the repository
-root with `gcloud` logged in as the project owner. Nothing here holds a
-secret: the API key lives only in Secret Manager.
+How DNAbarcode.org's Google Cloud resources were created, so they can be
+checked or rebuilt. Each product has its own project; the `prokoptonml`
+project holds only the platform's own services. Commands are run once, by
+hand, from the repository root, with `gcloud` signed in as the owner.
+Nothing here holds a secret: the API key lives only in Secret Manager.
 
 | Setting | Value |
 |---|---|
-| Project | `prokoptonml` |
+| Project | `dnabarcode` (display name "DNAbarcode") |
 | Region | `europe-west2` (London) |
-| Budget alert | £10 a month (set in the console) |
+| Budget | `dnabarcode-monthly`: £10 a month, alerts at 50/90/100% (console) |
+| Spend cap | `dnabarcode-spend-cap`: Cloud Run, £10 (console) |
 
 ## 1. Project
 
-Created in the console, with billing linked and the needed APIs enabled.
+Display names may not contain a full stop.
 
 ```bash
-gcloud config set project prokoptonml
+gcloud projects create dnabarcode --name="DNAbarcode"
+BILLING="$(gcloud billing accounts list --filter=open=true --format='value(name)' | head -1)"
+gcloud billing projects link dnabarcode --billing-account="$BILLING"
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com \
+    secretmanager.googleapis.com storage.googleapis.com iam.googleapis.com \
+    iamcredentials.googleapis.com sts.googleapis.com --project=dnabarcode
 ```
 
-## 2. Artifact Registry (Docker images for Cloud Run)
+## 2. Images and bundles
 
-One Docker repository. The cleanup policy keeps the 5 newest images and
-deletes anything else older than 7 days, so storage stays near the free
-tier. `set-cleanup-policies` only previews a policy without `--no-dry-run`.
+Images go to `europe-west2-docker.pkg.dev/dnabarcode/images`. The cleanup
+policy keeps the 5 newest images and deletes others after 7 days
+(`set-cleanup-policies` only previews a policy without `--no-dry-run`).
+Serving bundles are built locally (they need the full data and the MLflow
+registry) and kept in a private bucket, one dated folder each (`<date>/`);
+CI downloads the one named in `infra/deploy/dnabarcode.env` and checks it
+against its manifest. Old bundles are removed by hand, never the one in use.
 
 ```bash
-gcloud services enable artifactregistry.googleapis.com
-gcloud artifacts repositories create prokoptonml --repository-format=docker \
-    --location=europe-west2 --description="ProkoptonML service images"
-gcloud artifacts repositories set-cleanup-policies prokoptonml \
+gcloud artifacts repositories create images --project=dnabarcode \
+    --repository-format=docker --location=europe-west2 \
+    --description="DNAbarcode.org service images"
+gcloud artifacts repositories set-cleanup-policies images --project=dnabarcode \
     --location=europe-west2 \
     --policy=infra/gcp/artifact-registry-cleanup-policy.json --no-dry-run
-```
-
-Images are pushed to `europe-west2-docker.pkg.dev/prokoptonml/prokoptonml`.
-Registry vulnerability scanning is off (it is charged per image).
-
-## 3. Cloud Storage (serving bundles)
-
-A private bucket of serving bundles, one dated folder per bundle per app
-(`<app>/<date>/`). Bundles are built locally (they need the full data) and
-uploaded; CI downloads the one named in `infra/deploy/<app>.env`, checks it
-against its manifest and builds it into the image.
-
-```bash
-gcloud storage buckets create gs://prokoptonml-bundles --location=europe-west2 \
-    --uniform-bucket-level-access --public-access-prevention
+gcloud storage buckets create gs://dnabarcode-bundles --project=dnabarcode \
+    --location=europe-west2 --uniform-bucket-level-access --public-access-prevention
 gcloud storage rsync data/models/dnabarcode/bundle \
-    gs://prokoptonml-bundles/dnabarcode/2026-11-12 --recursive
+    gs://dnabarcode-bundles/<YYYY-MM-DD> --recursive
 ```
 
-Old bundles are not deleted automatically: a lifecycle rule cannot tell
-which bundle `infra/deploy/<app>.env` still names, and each one costs well
-under 1p a month. Remove unused ones by hand, never the one in use:
+## 3. API key, identities and trust
+
+- `dnabarcode-api`: the service's runtime identity; it can only read its
+  own API key.
+- `github-deployer`: CI's identity. Push to this project's image
+  repository; read this project's bundle bucket; act as `dnabarcode-api`
+  only; `run.developer` on the project for the first deploy (which creates
+  the service), then on the one service only (see 4).
+- Workload Identity Federation: pool `github`, provider
+  `dnabarcode-releases`, accepting only `leehart3000/dnabarcode` (by its
+  fixed numeric ID) on `main` and on `v*` release tags. No stored Google keys.
 
 ```bash
-gcloud storage ls gs://prokoptonml-bundles/dnabarcode/
-gcloud storage rm --recursive gs://prokoptonml-bundles/dnabarcode/<date>/
-```
-
-## 4. Service accounts and Workload Identity Federation
-
-**One Cloud Run service, and one runtime service account, per app.** CI
-signs in without stored keys: GitHub's OIDC token is exchanged for a
-short-lived Google token, accepted only for this repository (by its fixed
-numeric ID) on `main`.
-
-- `dnabarcode-api`: the service's runtime identity. Only permission: read
-  its own API-key secret.
-- `github-deployer`: CI's identity. Push to the one Artifact Registry
-  repository; read the one bundle bucket; deploy Cloud Run services
-  (`run.developer`, which cannot change who may call a service); act as
-  `dnabarcode-api` only.
-
-```bash
-PROJECT_ID=prokoptonml
-PROJECT_NUMBER="$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')"
-REPO_ID="$(gh api repos/leehart3000/prokoptonml --jq .id)"
-DEPLOYER="github-deployer@$PROJECT_ID.iam.gserviceaccount.com"
-RUNTIME="dnabarcode-api@$PROJECT_ID.iam.gserviceaccount.com"
-gcloud services enable iam.googleapis.com iamcredentials.googleapis.com \
-    sts.googleapis.com run.googleapis.com
-gcloud iam service-accounts create dnabarcode-api \
+P=dnabarcode
+NUMBER="$(gcloud projects describe $P --format='value(projectNumber)')"
+REPO_ID="$(gh api repos/leehart3000/dnabarcode --jq .id)"
+DEPLOYER="github-deployer@$P.iam.gserviceaccount.com"
+RUNTIME="dnabarcode-api@$P.iam.gserviceaccount.com"
+openssl rand -hex 32 | tr -d '\n' | gcloud secrets create dnabarcode-api-key --project=$P \
+    --replication-policy=user-managed --locations=europe-west2 --data-file=-
+gcloud iam service-accounts create dnabarcode-api --project=$P \
     --display-name="dnabarcode API (Cloud Run runtime)"
-gcloud iam service-accounts create github-deployer \
+gcloud iam service-accounts create github-deployer --project=$P \
     --display-name="GitHub Actions deployer"
-gcloud artifacts repositories add-iam-policy-binding prokoptonml \
+gcloud secrets add-iam-policy-binding dnabarcode-api-key --project=$P \
+    --member="serviceAccount:$RUNTIME" --role=roles/secretmanager.secretAccessor
+gcloud artifacts repositories add-iam-policy-binding images --project=$P \
     --location=europe-west2 --member="serviceAccount:$DEPLOYER" \
     --role=roles/artifactregistry.writer
-gcloud storage buckets add-iam-policy-binding gs://prokoptonml-bundles \
+gcloud storage buckets add-iam-policy-binding gs://dnabarcode-bundles \
     --member="serviceAccount:$DEPLOYER" --role=roles/storage.objectViewer
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-    --member="serviceAccount:$DEPLOYER" --role=roles/run.developer --condition=None
-gcloud iam service-accounts add-iam-policy-binding $RUNTIME \
+gcloud iam service-accounts add-iam-policy-binding $RUNTIME --project=$P \
     --member="serviceAccount:$DEPLOYER" --role=roles/iam.serviceAccountUser
-gcloud iam workload-identity-pools create github --location=global \
+gcloud projects add-iam-policy-binding $P --member="serviceAccount:$DEPLOYER" \
+    --role=roles/run.developer --condition=None
+gcloud iam workload-identity-pools create github --project=$P --location=global \
     --display-name="GitHub Actions"
-gcloud iam workload-identity-pools providers create-oidc prokoptonml-main \
-    --location=global --workload-identity-pool=github \
-    --display-name="prokoptonml main branch" \
-    --issuer-uri="https://token.actions.githubusercontent.com" \
-    --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_id=assertion.repository_id,attribute.ref=assertion.ref" \
-    --attribute-condition="assertion.repository_id=='$REPO_ID' && assertion.ref=='refs/heads/main'"
-gcloud iam service-accounts add-iam-policy-binding $DEPLOYER \
-    --role=roles/iam.workloadIdentityUser \
-    --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github/attribute.repository_id/$REPO_ID"
-```
-
-## 5. Secret Manager (API key)
-
-A random key, generated and stored without being shown, kept in London
-only, readable only by the runtime service account. Without a key the app
-leaves `/identify` open, so the service is never deployed without one.
-
-```bash
-gcloud services enable secretmanager.googleapis.com
-openssl rand -hex 32 | tr -d '\n' | gcloud secrets create dnabarcode-api-key \
-    --replication-policy=user-managed --locations=europe-west2 --data-file=-
-gcloud secrets add-iam-policy-binding dnabarcode-api-key \
-    --member="serviceAccount:$RUNTIME" --role=roles/secretmanager.secretAccessor
-```
-
-## 6. Deploy
-
-`.github/workflows/deploy-dnabarcode.yml`, run by hand from `main`, with the
-settings in `infra/deploy/dnabarcode.env`. It downloads and checks the
-bundle, builds the image, tests it (health, key required, and the known
-answers in `apps/dnabarcode/checks/`), pushes it, deploys it by digest and
-checks the live service.
-
-The first deploy is run with `check_public` off: the service starts
-private, because the deployer cannot change who may call it. Then, once:
-
-```bash
-DEPLOYER="github-deployer@prokoptonml.iam.gserviceaccount.com"
-# Anyone may reach the service; /identify still needs the API key
-gcloud run services add-iam-policy-binding dnabarcode-api --region europe-west2 \
-    --member=allUsers --role=roles/run.invoker
-# Narrow the deployer from the whole project to this one service
-gcloud run services add-iam-policy-binding dnabarcode-api --region europe-west2 \
-    --member="serviceAccount:$DEPLOYER" --role=roles/run.developer
-gcloud projects remove-iam-policy-binding prokoptonml \
-    --member="serviceAccount:$DEPLOYER" --role=roles/run.developer --condition=None
-```
-
-A new app's first deploy needs `run.developer` on the project for a moment
-(to create its service), then the same narrowing.
-
-A real call, with the key passed from Secret Manager without being shown:
-
-```bash
-URL="$(gcloud run services describe dnabarcode-api --region europe-west2 --format='value(status.url)')"
-curl --header 'Content-Type: application/json' \
-    --header @<(printf 'X-Prokopton-Key: %s\n' "$(gcloud secrets versions access latest --secret=dnabarcode-api-key)") \
-    --data @apps/dnabarcode/checks/aedes-aegypti-HQ945416.json "$URL/identify"
-```
-
-## 7. Move to the dnabarcode repository (November 2026)
-
-DNAbarcode.org moved from `leehart3000/prokoptonml` to its own repository,
-`leehart3000/dnabarcode`, which installs the platform from PyPI. Its deploys
-sign in through a second provider in the same pool, trusting only this
-repository (by its numeric ID) on `main` and on `v*` release tags. The old
-`prokoptonml-main` provider is removed once nothing uses it.
-
-```bash
-PROJECT_NUMBER="$(gcloud projects describe prokoptonml --format='value(projectNumber)')"
-REPO_ID="$(gh api repos/leehart3000/dnabarcode --jq .id)"
 gcloud iam workload-identity-pools providers create-oidc dnabarcode-releases \
-    --location=global --workload-identity-pool=github \
+    --project=$P --location=global --workload-identity-pool=github \
     --display-name="dnabarcode main and release tags" \
     --issuer-uri="https://token.actions.githubusercontent.com" \
     --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_id=assertion.repository_id,attribute.ref=assertion.ref" \
     --attribute-condition="assertion.repository_id=='$REPO_ID' && (assertion.ref=='refs/heads/main' || assertion.ref.startsWith('refs/tags/v'))"
-gcloud iam service-accounts add-iam-policy-binding \
-    github-deployer@prokoptonml.iam.gserviceaccount.com \
+gcloud iam service-accounts add-iam-policy-binding $DEPLOYER --project=$P \
     --role=roles/iam.workloadIdentityUser \
-    --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github/attribute.repository_id/$REPO_ID"
+    --member="principalSet://iam.googleapis.com/projects/$NUMBER/locations/global/workloadIdentityPools/github/attribute.repository_id/$REPO_ID"
 ```
+
+## 4. First deploy, then make it public and narrow the deployer
+
+`.github/workflows/deploy-dnabarcode.yml` (settings in
+`infra/deploy/dnabarcode.env`) downloads and checks the bundle, builds the
+image with the platform from PyPI, tests it, pushes it, deploys it by digest
+and checks the live service. The first deploy runs with `check_public` off:
+the service starts private, because the deployer cannot change who may call
+it. Then, once:
+
+```bash
+P=dnabarcode
+DEPLOYER="github-deployer@$P.iam.gserviceaccount.com"
+# Anyone may reach the service; /identify still needs the API key
+gcloud run services add-iam-policy-binding dnabarcode-api --project=$P \
+    --region europe-west2 --member=allUsers --role=roles/run.invoker
+# Narrow the deployer from the whole project to this one service
+gcloud run services add-iam-policy-binding dnabarcode-api --project=$P \
+    --region europe-west2 --member="serviceAccount:$DEPLOYER" --role=roles/run.developer
+gcloud projects remove-iam-policy-binding $P \
+    --member="serviceAccount:$DEPLOYER" --role=roles/run.developer --condition=None
+```
+
+The Cloudflare Worker (`sites/dnabarcode/`) then gets the service's address
+(`API_URL` in `wrangler.jsonc`) and the key, piped from Secret Manager:
+
+```bash
+gcloud secrets versions access latest --secret=dnabarcode-api-key --project=dnabarcode \
+    | npx --yes wrangler@4.162.0 secret put API_KEY --config sites/dnabarcode/wrangler.jsonc
+```
+
+## History
+
+Until November 2026, DNAbarcode.org ran in the `prokoptonml` project and was
+deployed from the `prokoptonml` repository. It moved to its own repository
+(installing the platform from PyPI) and then to this project, so that the
+`prokoptonml` project holds only the platform's own services.
 
 The local `data/` folder (bundles and the MLflow registry) stays in the
 `prokoptonml` working copy for now and is linked from this one
