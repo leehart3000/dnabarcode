@@ -19,7 +19,8 @@ gcp-key*.json
 .pixi/*
 !.pixi/config.toml
 
-# --- Data (downloaded and generated; never committed) ---
+# --- Data (downloaded and generated; never committed; may be a link) ---
+/data
 /data/
 
 # --- Python ---
