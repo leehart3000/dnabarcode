@@ -3,7 +3,7 @@ name: Deploy dnabarcode
 # Builds the dnabarcode API image with the serving bundle named in
 # infra/deploy/dnabarcode.env, tests it, pushes it and deploys it to Cloud
 # Run. Run by hand from main (Actions > Deploy dnabarcode > Run workflow);
-# Google only trusts runs from main of this repository.
+# Google only trusts runs from main and v* release tags of this repository.
 on:
   workflow_dispatch:
     inputs:

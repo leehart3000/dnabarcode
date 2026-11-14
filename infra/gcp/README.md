@@ -156,3 +156,30 @@ curl --header 'Content-Type: application/json' \
     --header @<(printf 'X-Prokopton-Key: %s\n' "$(gcloud secrets versions access latest --secret=dnabarcode-api-key)") \
     --data @apps/dnabarcode/checks/aedes-aegypti-HQ945416.json "$URL/identify"
 ```
+
+## 7. Move to the dnabarcode repository (November 2026)
+
+DNAbarcode.org moved from `leehart3000/prokoptonml` to its own repository,
+`leehart3000/dnabarcode`, which installs the platform from PyPI. Its deploys
+sign in through a second provider in the same pool, trusting only this
+repository (by its numeric ID) on `main` and on `v*` release tags. The old
+`prokoptonml-main` provider is removed once nothing uses it.
+
+```bash
+PROJECT_NUMBER="$(gcloud projects describe prokoptonml --format='value(projectNumber)')"
+REPO_ID="$(gh api repos/leehart3000/dnabarcode --jq .id)"
+gcloud iam workload-identity-pools providers create-oidc dnabarcode-releases \
+    --location=global --workload-identity-pool=github \
+    --display-name="dnabarcode main and release tags" \
+    --issuer-uri="https://token.actions.githubusercontent.com" \
+    --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_id=assertion.repository_id,attribute.ref=assertion.ref" \
+    --attribute-condition="assertion.repository_id=='$REPO_ID' && (assertion.ref=='refs/heads/main' || assertion.ref.startsWith('refs/tags/v'))"
+gcloud iam service-accounts add-iam-policy-binding \
+    github-deployer@prokoptonml.iam.gserviceaccount.com \
+    --role=roles/iam.workloadIdentityUser \
+    --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github/attribute.repository_id/$REPO_ID"
+```
+
+The local `data/` folder (bundles and the MLflow registry) stays in the
+`prokoptonml` working copy for now and is linked from this one
+(`ln -s ../prokoptonml/data data`), because MLflow records absolute paths.
