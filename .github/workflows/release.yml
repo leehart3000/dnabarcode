@@ -1,0 +1,86 @@
+name: Release
+
+# A v* tag releases DNAbarcode.org: deploy the API (Cloud Run), deploy the
+# website and gateway (Cloudflare) with the version in the footer, run the
+# browser tests against the live site, then record a GitHub Release.
+#   git tag -a v1.0.0 -m "DNAbarcode.org 1.0.0" && git push origin v1.0.0
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  api:
+    name: API
+    uses: ./.github/workflows/deploy-dnabarcode.yml
+    with:
+      check_public: true
+    permissions:
+      contents: read
+      id-token: write # To sign in to Google with Workload Identity Federation
+
+  site:
+    name: Deploy the website and gateway
+    needs: api
+    runs-on: ubuntu-24.04 # Pinned; move to a newer image on purpose
+    timeout-minutes: 10
+    # Holds the Cloudflare token; only v* tags may use it
+    environment:
+      name: production
+      url: https://dnabarcode.org
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # The tags, for the version
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Put the version in the footer
+        id: version
+        run: echo "version=$(sites/dnabarcode/scripts/stamp-version.sh)" >> "$GITHUB_OUTPUT"
+      - name: Deploy to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --yes wrangler@4.162.0 deploy --config sites/dnabarcode/wrangler.jsonc
+
+  browser-tests:
+    name: Browser tests
+    needs: site
+    uses: ./.github/workflows/site.yml
+    with:
+      live: true
+
+  record:
+    name: Record the release
+    needs: [site, browser-tests]
+    runs-on: ubuntu-24.04 # Pinned; move to a newer image on purpose
+    timeout-minutes: 5
+    permissions:
+      contents: write # To create the GitHub Release
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.site.outputs.version }}
+        run: |
+          bundle="$(grep -E '^BUNDLE=' infra/deploy/dnabarcode.env | cut -d= -f2-)"
+          platform="$(grep -E '^ARG PROKOPTON_ML_VERSION=' Dockerfile | cut -d= -f2-)"
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title "DNAbarcode.org ${GITHUB_REF_NAME#v}" --generate-notes \
+            --notes "Site version: \`$VERSION\`. Serving bundle: \`$bundle\`. Platform: prokopton-ml $platform. Deployed and checked by the Release workflow."

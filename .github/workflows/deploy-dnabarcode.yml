@@ -2,9 +2,15 @@ name: Deploy dnabarcode
 
 # Builds the dnabarcode API image with the serving bundle named in
 # infra/deploy/dnabarcode.env, tests it, pushes it and deploys it to Cloud
-# Run. Run by hand from main (Actions > Deploy dnabarcode > Run workflow);
-# Google only trusts runs from main and v* release tags of this repository.
+# Run. Called by the Release workflow for each v* tag, or run by hand from
+# main (Actions > Deploy dnabarcode > Run workflow). Google only trusts runs
+# from main and v* release tags of this repository.
 on:
+  workflow_call:
+    inputs:
+      check_public:
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       check_public:
@@ -23,7 +29,7 @@ concurrency:
 jobs:
   deploy:
     name: Build, test and deploy
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-24.04 # Pinned; move to a newer image on purpose
     timeout-minutes: 30
     permissions:
