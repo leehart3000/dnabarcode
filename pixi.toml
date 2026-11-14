@@ -1,0 +1,65 @@
+# DNAbarcode.org: the product. The ProkoptonML platform comes from PyPI at
+# an exact version (prokopton-ml); this repository holds the app's config,
+# reviewed reference files, model cards, checks, website and deploy settings.
+
+[workspace]
+name = "dnabarcode"
+channels = ["conda-forge"]
+platforms = ["osx-64", "osx-arm64", "linux-64"]
+requires-pixi = ">=0.84"
+
+# The same scientific stack as the platform, from conda-forge
+[dependencies]
+python = "3.13.*"
+pydantic = ">=2.11,<3"
+numpy = ">=2"
+pandas = ">=2.2"
+pyarrow = ">=19"
+mlflow = ">=3.1,<4"
+scikit-learn = ">=1.6"
+scipy = ">=1.13"
+fastapi = ">=0.162.4,<0.163"
+uvicorn = ">=0.54.0,<0.55"
+
+# The platform, pinned exactly (keep in step with PROKOPTON_ML_VERSION in
+# the Dockerfile; `pixi run check` compares them)
+[pypi-dependencies]
+prokopton-ml = { version = "==0.1.0a2", extras = ["serve"] }
+
+[feature.dev.dependencies]
+ruff = "*"
+
+[feature.dev.tasks]
+format = "ruff format ."
+format-check = "ruff format --check ."
+lint = "ruff check ."
+check-config = "python scripts/check_config.py"
+check = { depends-on = ["format-check", "lint", "check-config"] }
+
+# The pipeline: each stage runs the platform's command-line tool on this
+# app's config
+[tasks]
+dnabarcode-ingest = "prokopton-ml ingest apps/dnabarcode/dnabarcode.toml"
+dnabarcode-validate = "prokopton-ml validate apps/dnabarcode/dnabarcode.toml"
+dnabarcode-split = "prokopton-ml split apps/dnabarcode/dnabarcode.toml"
+dnabarcode-leakage = "prokopton-ml leakage apps/dnabarcode/dnabarcode.toml"
+dnabarcode-sample = "prokopton-ml sample apps/dnabarcode/dnabarcode.toml"
+dnabarcode-train = "prokopton-ml train apps/dnabarcode/dnabarcode.toml"
+dnabarcode-calibrate = "prokopton-ml calibrate apps/dnabarcode/dnabarcode.toml"
+dnabarcode-evaluate = "prokopton-ml evaluate apps/dnabarcode/dnabarcode.toml"
+dnabarcode-card = "prokopton-ml card apps/dnabarcode/dnabarcode.toml"
+dnabarcode-marker-sample = "prokopton-ml sample apps/dnabarcode/dnabarcode.toml --model marker"
+dnabarcode-marker-train = "prokopton-ml train apps/dnabarcode/dnabarcode.toml --model marker"
+dnabarcode-marker-calibrate = "prokopton-ml calibrate apps/dnabarcode/dnabarcode.toml --model marker"
+dnabarcode-marker-evaluate = "prokopton-ml evaluate apps/dnabarcode/dnabarcode.toml --model marker"
+dnabarcode-marker-card = "prokopton-ml card apps/dnabarcode/dnabarcode.toml --model marker"
+dnabarcode-culicidae-anchors = "prokopton-ml anchors apps/dnabarcode/dnabarcode.toml --specialist culicidae"
+dnabarcode-culicidae-reference = "prokopton-ml reference apps/dnabarcode/dnabarcode.toml --specialist culicidae"
+dnabarcode-culicidae-evaluate = "prokopton-ml evaluate apps/dnabarcode/dnabarcode.toml --specialist culicidae"
+dnabarcode-culicidae-card = "prokopton-ml card apps/dnabarcode/dnabarcode.toml --specialist culicidae"
+dnabarcode-bundle = "prokopton-ml bundle apps/dnabarcode/dnabarcode.toml"
+dnabarcode-serve = { cmd = "uvicorn --factory prokopton.ml.serving.app:create_app_from_env --port 8080", env = { PROKOPTON_BUNDLE = "data/models/dnabarcode/bundle", PROKOPTON_API_TITLE = "DNAbarcode.org API" } }
+
+[environments]
+default = { features = ["dev"], solve-group = "default" }
+prod = { features = [], solve-group = "default" }

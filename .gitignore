@@ -1,0 +1,48 @@
+# --- Operating system ---
+.DS_Store
+Thumbs.db
+
+# --- Editors ---
+*.code-workspace
+.vscode/
+.idea/
+
+# --- Secrets and local environment ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+gcp-key*.json
+
+# --- Pixi ---
+.pixi/*
+!.pixi/config.toml
+
+# --- Data (downloaded and generated; never committed) ---
+/data/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+
+# --- Lint cache ---
+.ruff_cache/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- MLflow (local tracking) ---
+mlruns/
+mlartifacts/
+
+# --- Node.js and Cloudflare ---
+node_modules/
+.wrangler/
+
+# --- Playwright ---
+test-results/
+playwright-report/
+
+# --- Serving bundle copied in for a Docker build ---
+/bundle/

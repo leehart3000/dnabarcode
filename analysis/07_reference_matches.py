@@ -19,7 +19,6 @@ from pathlib import Path
 
 import pyarrow.parquet as pq
 from prokopton.core.config import load_config
-
 from prokopton.ml.cli import ENV_PREFIX
 from prokopton.ml.config import AppConfig
 from prokopton.ml.inference.bundle import load_bundle

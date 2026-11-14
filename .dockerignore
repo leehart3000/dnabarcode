@@ -1,8 +1,3 @@
-# Only the package source, its metadata and the serving bundle go into the image
+# Only the serving bundle goes into the image (the platform comes from PyPI)
 *
-!pyproject.toml
-!README.md
-!LICENSE
-!src/
 !bundle/
-**/__pycache__

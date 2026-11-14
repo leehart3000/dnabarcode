@@ -1,0 +1,38 @@
+# Dependabot configuration
+# https://docs.github.com/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+#
+# Keeps the SHA-pinned GitHub Actions and the site's npm packages (Playwright)
+# up to date. Python and conda packages are managed by Pixi (pixi.lock); the
+# platform version (prokopton-ml) is raised on purpose, in pixi.toml and the
+# Dockerfile together.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/London
+    # Wait a week after a release before proposing it (supply-chain protection)
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: ci
+  - package-ecosystem: npm
+    directory: /sites/dnabarcode
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/London
+    cooldown:
+      default-days: 7
+    groups:
+      npm:
+        patterns: ["*"]
+    commit-message:
+      prefix: test

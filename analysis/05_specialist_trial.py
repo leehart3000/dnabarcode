@@ -21,7 +21,6 @@ from typing import Any
 
 import pyarrow.parquet as pq
 from prokopton.core.config import load_config
-
 from prokopton.ml.cli import ENV_PREFIX
 from prokopton.ml.config import AppConfig
 from prokopton.ml.pipeline.reference import reference_path

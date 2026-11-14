@@ -24,7 +24,6 @@ from pathlib import Path
 
 import numpy as np
 from prokopton.core.config import load_config
-
 from prokopton.ml.cli import ENV_PREFIX
 from prokopton.ml.config import AppConfig
 from prokopton.ml.pipeline.reference import serving_reference_path
