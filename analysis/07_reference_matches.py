@@ -9,7 +9,7 @@ species' anchor, far from its own) stands out.
 
 Usage:
     pixi run python analysis/07_reference_matches.py \\
-        apps/dnabarcode/dnabarcode.toml data/models/dnabarcode/bundle culicidae \\
+        prokopton.toml data/models/dnabarcode/bundle culicidae \\
         --species "Aedes aegypti" "Aedes albopictus" \\
         --fasta query1.fasta query2.fasta
 """

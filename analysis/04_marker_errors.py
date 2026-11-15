@@ -15,7 +15,7 @@ random with a fixed seed):
 It loads the registered marker model (``@candidate``) from MLflow.
 
 Usage:
-    pixi run python analysis/04_marker_errors.py apps/dnabarcode/dnabarcode.toml \\
+    pixi run python analysis/04_marker_errors.py prokopton.toml \\
         data/analysis/marker_errors [--per-cell 3000]
 """
 

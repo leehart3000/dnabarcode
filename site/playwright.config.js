@@ -1,5 +1,5 @@
 // Browser tests of the live site (or another address, with SITE_URL).
-// Run from sites/dnabarcode: npx playwright test
+// Run from site: npx playwright test
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({

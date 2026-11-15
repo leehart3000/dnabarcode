@@ -1,15 +1,15 @@
 name: Site
 
 # DNAbarcode.org: unit tests of the gateway and page scripts on every change
-# to sites/, and browser tests of the live site after each release (called by
+# to site/, and browser tests of the live site after each release (called by
 # the Release workflow), on demand (gh workflow run site.yml) and weekly, to
 # catch changes outside the repository (Cloudflare, Cloud Run, certificates).
 on:
   pull_request:
-    paths: ["sites/**", ".github/workflows/site.yml"]
+    paths: ["site/**", ".github/workflows/site.yml"]
   push:
     branches: [main]
-    paths: ["sites/**", ".github/workflows/site.yml"]
+    paths: ["site/**", ".github/workflows/site.yml"]
   schedule:
     - cron: "17 6 * * 1" # Mondays
   workflow_dispatch:
@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: 22
       - name: Run the unit tests
-        working-directory: sites/dnabarcode
+        working-directory: site
         run: node --test test/*.test.js
 
   live:
@@ -48,7 +48,7 @@ jobs:
     timeout-minutes: 20
     defaults:
       run:
-        working-directory: sites/dnabarcode
+        working-directory: site
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -59,7 +59,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: sites/dnabarcode/package-lock.json
+          cache-dependency-path: site/package-lock.json
       - name: Install Playwright
         run: |
           npm ci

@@ -28,9 +28,13 @@ Visitor ─► DNAbarcode.org (Cloudflare Worker: pages, firewall rate limit,
 
 | Path | Contents |
 |---|---|
-| `apps/dnabarcode/` | The app config, reviewed reference files, model cards and known-answer checks |
+| `prokopton.toml` | The app config (models, thresholds, reviewed exclusions, serving rules) |
+| `model-cards/` | The model cards and the notes they include |
+| `curated/` | Reviewed input files: phylum lineages and RefSeq anchors |
+| `tests/known-answers/` | Known-answer checks, run on every deploy |
+| `tests/golden/` | The golden set: about 200 full answers that must not change |
 | `analysis/` | One-off analyses, with each question, finding and decision |
-| `sites/dnabarcode/` | The website and API gateway (Cloudflare Worker), with unit and browser tests |
+| `site/` | The website and API gateway (Cloudflare Worker), with unit and browser tests |
 | `infra/` | Google Cloud setup runbook and deploy settings |
 | `docs/` | How to release and operate DNAbarcode.org |
 | `Dockerfile` | The API image: `prokopton-ml` from PyPI plus the serving bundle |
@@ -51,8 +55,8 @@ operating the live service: [`docs/releasing-dnabarcode.md`](docs/releasing-dnab
 
 ## Model cards
 
-- [Culicidae specialist](apps/dnabarcode/model-cards/culicidae.md), with
-  its [development notes](apps/dnabarcode/model-cards/culicidae-notes.md)
+- [Culicidae specialist](model-cards/culicidae.md), with
+  its [development notes](model-cards/culicidae-notes.md)
 
 ## Licence
 

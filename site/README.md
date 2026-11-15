@@ -48,14 +48,14 @@ refuses identifications without the human check. They run in CI
 
 ```bash
 # Unit tests (Node 22+)
-node --test sites/dnabarcode/test/*.test.js
-# Browser tests of the live site (from sites/dnabarcode, after npm ci)
+node --test site/test/*.test.js
+# Browser tests of the live site (from site, after npm ci)
 npx playwright install chromium && npx playwright test
 # The same in CI, after deploying the site
 gh workflow run site.yml
 # Deploy, from the repository root
-npx --yes wrangler@4.162.0 deploy --config sites/dnabarcode/wrangler.jsonc
+npx --yes wrangler@4.162.0 deploy --config site/wrangler.jsonc
 # Set the API key without showing it
 gcloud secrets versions access latest --secret=dnabarcode-api-key \
-    | npx --yes wrangler@4.162.0 secret put API_KEY --config sites/dnabarcode/wrangler.jsonc
+    | npx --yes wrangler@4.162.0 secret put API_KEY --config site/wrangler.jsonc
 ```
