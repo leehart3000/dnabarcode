@@ -104,19 +104,23 @@ jobs:
             --header 'Content-Type: application/json' \
             --data '{"sequence": "ACGT"}' http://localhost:8080/identify)"
           test "$status" = 401 || { echo "Expected 401 without a key, got $status"; exit 1; }
-          # Each known sequence must give its expected answer
+          # Each known sequence must give its expected answer (the answer
+          # text, or "declined: <reason>"; see apps/dnabarcode/checks/)
+          failed=0
           for request in apps/dnabarcode/checks/*.json; do
             expected="$(cat "${request%.json}.expected")"
             answer="$(curl --silent --show-error --fail \
               --header 'Content-Type: application/json' \
               --header 'X-Prokopton-Key: ci-test-key' \
-              --data @"$request" http://localhost:8080/identify | jq -r '.answer.text')"
-            echo "$(basename "$request"): $answer"
+              --data @"$request" http://localhost:8080/identify \
+              | jq -r '.answer.text // ("declined: " + .reason)')"
+            echo "$(basename "$request" .json): $answer"
             case "$answer" in
               "$expected"*) ;;
-              *) echo "Expected an answer starting '$expected'"; exit 1 ;;
+              *) echo "  Expected: $expected"; failed=1 ;;
             esac
           done
+          test "$failed" = 0
 
       - name: Show the service log if the test failed
         if: failure()
