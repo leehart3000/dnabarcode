@@ -19,6 +19,7 @@ committing.
 | `aedes-aegypti-mitogenome-NC_035159` | RefSeq NC_035159.1, *Ae. aegypti* mitochondrial genome (lab strain) | Finding the barcode in a long sequence; a cautious genus answer |
 | `aedes-aegypti-mitogenome-PQ197330` | GenBank PQ197330, *Ae. aegypti* mitochondrial genome | Finding the barcode; a species answer |
 | `culex-pipiens` | A *Cx. pipiens* COI barcode | A complex answer |
+| `anopheles-gambiae-mitogenome-NC_002084` | RefSeq NC_002084.1, *An. gambiae* mitochondrial genome | Finding the barcode in another genus; a complex answer |
 | `aedes-albopictus-refseq` | RefSeq COI of *Ae. albopictus* (from the committed anchors) | Not confused with *Ae. aegypti* |
 | `human-mitogenome-NC_012920` | RefSeq NC_012920.1, human mitochondrial genome | A non-mosquito animal: a broad group only |
 | `declined-too-short` | The first 80 bases of HQ945416.1 | Declining under 100 bases |
