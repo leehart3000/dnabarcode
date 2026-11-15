@@ -118,6 +118,7 @@ test("external links open in a new tab and say so", async ({ page }) => {
     for (const link of await external.all()) {
       await expect(link).toHaveAttribute("rel", /noopener/);
       await expect(link).toContainText("(opens in a new tab)");
+      await expect(link.locator(".ext-tail .ext-icon")).toHaveCount(1);
     }
   }
 });
