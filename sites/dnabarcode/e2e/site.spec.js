@@ -8,6 +8,7 @@ const PAGES = [
   ["/submit", "What can I submit? · DNAbarcode.org"],
   ["/finding-coi", "Finding the COI region · DNAbarcode.org"],
   ["/scope", "Scope and limits · DNAbarcode.org"],
+  ["/how-it-works", "How it works · DNAbarcode.org"],
 ];
 
 const FAKE_TURNSTILE = `
@@ -100,13 +101,24 @@ test("the navigation marks the current page", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Scope and limits" })).toHaveAttribute("aria-current", "page");
 });
 
+test("the How it works diagram is shown and fits", async ({ page }) => {
+  await page.goto("/how-it-works");
+  const diagram = page.getByRole("img", { name: "How a sequence is identified" });
+  await expect(diagram).toBeVisible();
+  const box = await diagram.boundingBox();
+  expect(box.width).toBeLessThanOrEqual(page.viewportSize().width);
+  expect(box.height).toBeGreaterThan(200);
+});
+
 test("external links open in a new tab and say so", async ({ page }) => {
-  await page.goto("/scope");
-  const external = page.locator('a[target="_blank"]');
-  expect(await external.count()).toBeGreaterThan(0);
-  for (const link of await external.all()) {
-    await expect(link).toHaveAttribute("rel", /noopener/);
-    await expect(link).toContainText("(opens in a new tab)");
+  for (const path of ["/scope", "/how-it-works"]) {
+    await page.goto(path);
+    const external = page.locator('a[target="_blank"]');
+    expect(await external.count()).toBeGreaterThan(0);
+    for (const link of await external.all()) {
+      await expect(link).toHaveAttribute("rel", /noopener/);
+      await expect(link).toContainText("(opens in a new tab)");
+    }
   }
 });
 
@@ -147,6 +159,7 @@ test("an identification shows the answer and how it was reached", async ({ page 
   await expect(result.locator(".answer")).toHaveText("Aedes aegypti (100.0% identical).");
   await expect(result.getByRole("heading", { name: "How this answer was reached" })).toBeVisible();
   await expect(result.locator("ol.trace li")).toHaveCount(4);
+  await expect(result.getByRole("link", { name: "How identification works" })).toHaveAttribute("href", "/how-it-works");
   expect(sent.turnstileToken).toBe("test-token");
   expect(sent.sequence).toContain(">HQ945416.1");
   expect(errors).toEqual([]);

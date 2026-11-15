@@ -236,6 +236,17 @@ footer {
   font-size: .88rem;
 }
 
+/* The diagram on the How it works page (colours follow the theme) */
+.flow { margin: 1.5rem auto; max-width: 26rem; }
+.flow svg { display: block; width: 100%; height: auto; }
+.flow-box { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; }
+.flow-key { stroke: var(--accent); stroke-width: 2; }
+.flow-title { fill: var(--ink); font-size: 14px; font-weight: 600; }
+.flow-note, .flow-label { fill: var(--muted); font-size: 12px; }
+.flow-label { font-style: italic; }
+.flow-line { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.flow-head { fill: var(--muted); }
+
 /* Narrow screens (for example iPhone SE, 375 px wide) */
 @media (max-width: 480px) {
   body { font-size: 16px; }

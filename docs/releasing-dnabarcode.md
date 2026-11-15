@@ -129,8 +129,8 @@ npx --yes wrangler@4.162.0 tail --config sites/dnabarcode/wrangler.jsonc
   zero). Settings in `infra/deploy/dnabarcode.env`.
 - Cold start: an idle service took 12–13 s to answer (November 2026): 7–10 s
   to start the container and import Python, and 3–5 s to load the bundle.
-  Warm requests take about 0.1 s, or 0.2–0.35 s through the site. Each page
-  wakes the service when it opens (`/api/health`), and the page explains a
+  Warm requests take about 0.1 s, or 0.2–0.35 s through the site. The
+  identify page wakes the service when it opens (`/api/health`), and the page explains a
   slow first answer after 4 s.
 - Startup CPU boost was tried (v1.0.4) and did not shorten the cold start
   (13.1 s against 12.3 s), so it is turned off (`--no-cpu-boost`; leaving the

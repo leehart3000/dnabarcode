@@ -132,6 +132,11 @@ function appendTrace(box, trace) {
     steps.append(item);
   }
   box.append(steps);
+  const more = element("p", "", "meta");
+  const link = element("a", "How identification works");
+  link.href = "/how-it-works";
+  more.append(link);
+  box.append(more);
 }
 
 async function errorMessage(response) {
