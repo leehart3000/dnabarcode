@@ -21,10 +21,10 @@ from typing import Any
 
 import pyarrow.parquet as pq
 from prokopton.core.config import load_config
+from prokopton.ml.bio.pipeline.reference import reference_path
+from prokopton.ml.bio.specialists.identify import Identification, Specialist
 from prokopton.ml.cli import ENV_PREFIX
 from prokopton.ml.config import AppConfig
-from prokopton.ml.pipeline.reference import reference_path
-from prokopton.ml.specialists.identify import Identification, Specialist
 
 COLUMNS = ["split", "order", "family", "genus", "species", "species_named", "sequence"]
 

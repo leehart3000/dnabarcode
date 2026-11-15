@@ -24,10 +24,10 @@ from pathlib import Path
 
 import numpy as np
 from prokopton.core.config import load_config
+from prokopton.ml.bio.pipeline.reference import serving_reference_path
+from prokopton.ml.bio.specialists.identify import QUERY_BATCH, Specialist
 from prokopton.ml.cli import ENV_PREFIX
 from prokopton.ml.config import AppConfig
-from prokopton.ml.pipeline.reference import serving_reference_path
-from prokopton.ml.specialists.identify import QUERY_BATCH, Specialist
 
 SAMPLE = 30
 
