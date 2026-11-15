@@ -105,9 +105,9 @@ jobs:
             --data '{"sequence": "ACGT"}' http://localhost:8080/identify)"
           test "$status" = 401 || { echo "Expected 401 without a key, got $status"; exit 1; }
           # Each known sequence must give its expected answer (the answer
-          # text, or "declined: <reason>"; see apps/dnabarcode/checks/)
+          # text, or "declined: <reason>"; see tests/known-answers/)
           failed=0
-          for request in apps/dnabarcode/checks/*.json; do
+          for request in tests/known-answers/*.json; do
             expected="$(cat "${request%.json}.expected")"
             answer="$(curl --silent --show-error --fail \
               --header 'Content-Type: application/json' \

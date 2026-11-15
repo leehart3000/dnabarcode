@@ -2,7 +2,7 @@
 
 About 200 sequences, and the full answer DNAbarcode.org gives to each, used to
 prove that reorganising the platform changes nothing. The known-answer checks
-in `../checks/` compare only the answer text of a few hand-picked sequences
+in `../known-answers/` compare only the answer text of a few hand-picked sequences
 on every deploy; the golden set compares everything (the answer, notes,
 strand, region and the decision trace, but not timings) for many more.
 
@@ -20,7 +20,7 @@ models), chosen at random but reproducibly by `scripts/golden.py select`:
 | `mosquito-novel` | 25 | Mosquito species held out of training |
 | `mosquito-unnamed` | 10 | Mosquito records without a species name |
 | `other-fly` | 25 | Other flies (Diptera), one per family |
-| `other-animal` | 40 | Other animals, one per order |
+| `other-animal` | 40 | Other organisms (animals, fungi and others), one per order |
 | `short`, `reverse`, `window` | 6 each | The first 150 bases, the other strand, and a 300-base window of mosquito sequences |
 | `gene-<gene>` | 2 per gene | Other mitochondrial genes, which must be declined |
 

@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
-    config = load_config(ROOT / "apps/dnabarcode/dnabarcode.toml", AppConfig)
+    config = load_config(ROOT / "prokopton.toml", AppConfig)
     print(f"Config OK: {config.name}, for prokopton-ml {__version__}")
 
     pinned = tomllib.loads((ROOT / "pixi.toml").read_text("utf-8"))[

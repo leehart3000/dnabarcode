@@ -35,31 +35,31 @@ format-check = "ruff format --check ."
 lint = "ruff check ."
 check-config = "python scripts/check_config.py"
 check = { depends-on = ["format-check", "lint", "check-config"] }
-# Compare the local bundle's answers with the golden set (apps/dnabarcode/golden)
+# Compare the local bundle's answers with the golden set (tests/golden)
 golden-check = "python scripts/golden.py check"
 
 # The pipeline: each stage runs the platform's command-line tool on this
 # app's config
 [tasks]
-dnabarcode-ingest = "prokopton-ml ingest apps/dnabarcode/dnabarcode.toml"
-dnabarcode-validate = "prokopton-ml validate apps/dnabarcode/dnabarcode.toml"
-dnabarcode-split = "prokopton-ml split apps/dnabarcode/dnabarcode.toml"
-dnabarcode-leakage = "prokopton-ml leakage apps/dnabarcode/dnabarcode.toml"
-dnabarcode-sample = "prokopton-ml sample apps/dnabarcode/dnabarcode.toml"
-dnabarcode-train = "prokopton-ml train apps/dnabarcode/dnabarcode.toml"
-dnabarcode-calibrate = "prokopton-ml calibrate apps/dnabarcode/dnabarcode.toml"
-dnabarcode-evaluate = "prokopton-ml evaluate apps/dnabarcode/dnabarcode.toml"
-dnabarcode-card = "prokopton-ml card apps/dnabarcode/dnabarcode.toml"
-dnabarcode-marker-sample = "prokopton-ml sample apps/dnabarcode/dnabarcode.toml --model marker"
-dnabarcode-marker-train = "prokopton-ml train apps/dnabarcode/dnabarcode.toml --model marker"
-dnabarcode-marker-calibrate = "prokopton-ml calibrate apps/dnabarcode/dnabarcode.toml --model marker"
-dnabarcode-marker-evaluate = "prokopton-ml evaluate apps/dnabarcode/dnabarcode.toml --model marker"
-dnabarcode-marker-card = "prokopton-ml card apps/dnabarcode/dnabarcode.toml --model marker"
-dnabarcode-culicidae-anchors = "prokopton-ml anchors apps/dnabarcode/dnabarcode.toml --specialist culicidae"
-dnabarcode-culicidae-reference = "prokopton-ml reference apps/dnabarcode/dnabarcode.toml --specialist culicidae"
-dnabarcode-culicidae-evaluate = "prokopton-ml evaluate apps/dnabarcode/dnabarcode.toml --specialist culicidae"
-dnabarcode-culicidae-card = "prokopton-ml card apps/dnabarcode/dnabarcode.toml --specialist culicidae"
-dnabarcode-bundle = "prokopton-ml bundle apps/dnabarcode/dnabarcode.toml"
+dnabarcode-ingest = "prokopton-ml ingest prokopton.toml"
+dnabarcode-validate = "prokopton-ml validate prokopton.toml"
+dnabarcode-split = "prokopton-ml split prokopton.toml"
+dnabarcode-leakage = "prokopton-ml leakage prokopton.toml"
+dnabarcode-sample = "prokopton-ml sample prokopton.toml"
+dnabarcode-train = "prokopton-ml train prokopton.toml"
+dnabarcode-calibrate = "prokopton-ml calibrate prokopton.toml"
+dnabarcode-evaluate = "prokopton-ml evaluate prokopton.toml"
+dnabarcode-card = "prokopton-ml card prokopton.toml"
+dnabarcode-marker-sample = "prokopton-ml sample prokopton.toml --model marker"
+dnabarcode-marker-train = "prokopton-ml train prokopton.toml --model marker"
+dnabarcode-marker-calibrate = "prokopton-ml calibrate prokopton.toml --model marker"
+dnabarcode-marker-evaluate = "prokopton-ml evaluate prokopton.toml --model marker"
+dnabarcode-marker-card = "prokopton-ml card prokopton.toml --model marker"
+dnabarcode-culicidae-anchors = "prokopton-ml anchors prokopton.toml --specialist culicidae"
+dnabarcode-culicidae-reference = "prokopton-ml reference prokopton.toml --specialist culicidae"
+dnabarcode-culicidae-evaluate = "prokopton-ml evaluate prokopton.toml --specialist culicidae"
+dnabarcode-culicidae-card = "prokopton-ml card prokopton.toml --specialist culicidae"
+dnabarcode-bundle = "prokopton-ml bundle prokopton.toml"
 dnabarcode-serve = { cmd = "uvicorn --factory prokopton.ml.serving.app:create_app_from_env --port 8080", env = { PROKOPTON_BUNDLE = "data/models/dnabarcode/bundle", PROKOPTON_API_TITLE = "DNAbarcode.org API" } }
 
 [environments]

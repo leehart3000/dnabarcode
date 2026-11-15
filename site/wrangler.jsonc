@@ -1,7 +1,7 @@
 // dnabarcode.org: the website (static files in public/) and a small API
 // gateway (src/index.js) in front of the dnabarcode Cloud Run service.
 // Deploy from the repository root:
-//   npx --yes wrangler@4.162.0 deploy --config sites/dnabarcode/wrangler.jsonc
+//   npx --yes wrangler@4.162.0 deploy --config site/wrangler.jsonc
 {
   "name": "dnabarcode-site",
   "main": "src/index.js",

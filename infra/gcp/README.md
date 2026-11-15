@@ -119,12 +119,12 @@ gcloud projects remove-iam-policy-binding $P \
     --member="serviceAccount:$DEPLOYER" --role=roles/run.developer --condition=None
 ```
 
-The Cloudflare Worker (`sites/dnabarcode/`) then gets the service's address
+The Cloudflare Worker (`site/`) then gets the service's address
 (`API_URL` in `wrangler.jsonc`) and the key, piped from Secret Manager:
 
 ```bash
 gcloud secrets versions access latest --secret=dnabarcode-api-key --project=dnabarcode \
-    | npx --yes wrangler@4.162.0 secret put API_KEY --config sites/dnabarcode/wrangler.jsonc
+    | npx --yes wrangler@4.162.0 secret put API_KEY --config site/wrangler.jsonc
 ```
 
 ## History

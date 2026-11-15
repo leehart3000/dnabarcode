@@ -14,7 +14,7 @@ the app config's ``excluded`` list, with a reason.
 
 Usage:
     pixi run python analysis/06_mislabel_candidates.py \\
-        apps/dnabarcode/dnabarcode.toml culicidae out.tsv
+        prokopton.toml culicidae out.tsv
 """
 
 import argparse

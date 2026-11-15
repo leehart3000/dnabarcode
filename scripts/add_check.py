@@ -1,7 +1,7 @@
 """Add a known-answer check: a sequence and the answer it must keep giving.
 
 Identifies the sequence with a local serving bundle and writes
-``apps/dnabarcode/checks/<name>.json`` (the ``/identify`` request) and
+``tests/known-answers/<name>.json`` (the ``/identify`` request) and
 ``<name>.expected`` (the answer, or ``declined: <reason>``). Review the
 printed answer before committing: the check freezes it, so any later change
 in that answer stops a deploy until the check is updated on purpose.
@@ -10,7 +10,7 @@ Examples:
     pixi run python scripts/add_check.py aedes-aegypti-reverse \\
         --fasta ../prokoptonml_resources/fasta/Aedes_aegypti.fasta --reverse
     pixi run python scripts/add_check.py anopheles-gambiae-refseq \\
-        --fasta apps/dnabarcode/reference/culicidae-refseq-cox1.fasta \\
+        --fasta curated/culicidae-refseq-cox1.fasta \\
         --match "Anopheles gambiae"
     pixi run python scripts/add_check.py declined-protein --text "MKLVEFIQ..."
 """
@@ -23,7 +23,7 @@ from pathlib import Path
 from prokopton.ml.inference.bundle import load_bundle
 
 ROOT = Path(__file__).resolve().parents[1]
-CHECKS = ROOT / "apps/dnabarcode/checks"
+CHECKS = ROOT / "tests/known-answers"
 COMPLEMENT = str.maketrans("ACGTRYKMBVDHNacgtrykmbvdhn", "TGCAYRMKVBHDNtgcayrmkvbhdn")
 
 

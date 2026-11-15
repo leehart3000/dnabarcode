@@ -8,7 +8,7 @@ answer is right, and how long identification takes. This guides tuning
 before a full evaluation.
 
 Usage:
-    pixi run python analysis/05_specialist_trial.py apps/dnabarcode/dnabarcode.toml \\
+    pixi run python analysis/05_specialist_trial.py prokopton.toml \\
         culicidae [--per-set 300]
 """
 

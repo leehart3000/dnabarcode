@@ -1,5 +1,5 @@
 // Tests for the API gateway, with Cloudflare's bindings and fetch replaced
-// by fakes. Run: node --test sites/dnabarcode/test/*.test.js
+// by fakes. Run: node --test site/test/*.test.js
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, test } from "node:test";
 

@@ -30,7 +30,7 @@ import pyarrow.parquet as pq
 from prokopton.ml.inference.bundle import load_bundle
 
 ROOT = Path(__file__).resolve().parents[1]
-GOLDEN = ROOT / "apps/dnabarcode/golden"
+GOLDEN = ROOT / "tests/golden"
 SEQUENCES = GOLDEN / "sequences.jsonl"
 ANSWERS = GOLDEN / "answers.jsonl"
 SPLITS = ROOT / "data/splits/dnabarcode/midori2_gb273"

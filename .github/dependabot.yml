@@ -23,7 +23,7 @@ updates:
     commit-message:
       prefix: ci
   - package-ecosystem: npm
-    directory: /sites/dnabarcode
+    directory: /site
     schedule:
       interval: weekly
       day: monday

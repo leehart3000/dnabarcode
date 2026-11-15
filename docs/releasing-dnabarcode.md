@@ -59,13 +59,13 @@ environment, which only `v*` tags can use.
    ```
 
 4. Compare the new bundle's answers with the golden set
-   (`apps/dnabarcode/golden/`): `pixi run golden-check` lists every changed
+   (`tests/golden/`): `pixi run golden-check` lists every changed
    answer. If no answer should change (a new platform version, say), it must
    report none. If answers are expected to change, review every difference,
    then record them with `pixi run python scripts/golden.py write --force`.
 5. In a pull request, set `BUNDLE=` in `infra/deploy/dnabarcode.env` to the
    new folder. If answers are expected to change, update or add known-answer
-   checks in `apps/dnabarcode/checks/`, and include the new golden answers.
+   checks in `tests/known-answers/`, and include the new golden answers.
 6. After merging, make a release (section 0), or deploy only the API and watch:
 
    ```bash
@@ -80,15 +80,15 @@ environment, which only `v*` tags can use.
 
 ## 2. Change the website or gateway
 
-1. Change `sites/dnabarcode/` in a pull request (the unit tests run in CI).
+1. Change `site/` in a pull request (the unit tests run in CI).
    Optionally run the browser tests against a local preview first.
 2. After merging, make a release (section 0). To deploy by hand instead
    (the footer then shows, for example, `1.0.0+2/8fdab8a`):
 
    ```bash
-   sites/dnabarcode/scripts/stamp-version.sh
-   npx --yes wrangler@4.162.0 deploy --config sites/dnabarcode/wrangler.jsonc
-   git restore sites/dnabarcode/public
+   site/scripts/stamp-version.sh
+   npx --yes wrangler@4.162.0 deploy --config site/wrangler.jsonc
+   git restore site/public
    gh workflow run site.yml --ref main
    ```
 
@@ -102,7 +102,7 @@ environment, which only `v*` tags can use.
   ```
 
   The next deploy sends traffic to the new revision again.
-- **Website:** `npx --yes wrangler@4.162.0 rollback --config sites/dnabarcode/wrangler.jsonc`
+- **Website:** `npx --yes wrangler@4.162.0 rollback --config site/wrangler.jsonc`
   (choose the version to return to).
 
 ## 4. Replace the API key
@@ -113,7 +113,7 @@ two while the two sides switch over.
 ```bash
 openssl rand -hex 32 | tr -d '\n' | gcloud secrets versions add dnabarcode-api-key --data-file=-
 gcloud secrets versions access latest --secret=dnabarcode-api-key \
-    | npx --yes wrangler@4.162.0 secret put API_KEY --config sites/dnabarcode/wrangler.jsonc
+    | npx --yes wrangler@4.162.0 secret put API_KEY --config site/wrangler.jsonc
 gcloud run services update dnabarcode-api --region europe-west2 \
     --update-secrets PROKOPTON_API_KEY=dnabarcode-api-key:latest
 gcloud secrets versions list dnabarcode-api-key       # then disable the old version:
@@ -122,7 +122,7 @@ gcloud secrets versions disable <OLD_VERSION> --secret=dnabarcode-api-key
 
 The Turnstile secret is replaced in the Cloudflare dashboard (Turnstile >
 the widget > rotate secret), then with
-`npx --yes wrangler@4.162.0 secret put TURNSTILE_SECRET --config sites/dnabarcode/wrangler.jsonc`.
+`npx --yes wrangler@4.162.0 secret put TURNSTILE_SECRET --config site/wrangler.jsonc`.
 
 ## 5. Look at what is happening
 
@@ -130,7 +130,7 @@ the widget > rotate secret), then with
 # API logs (JSON lines; sequences are never logged)
 gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="dnabarcode-api"' --limit 30 --freshness 1d
 # Gateway logs, live
-npx --yes wrangler@4.162.0 tail --config sites/dnabarcode/wrangler.jsonc
+npx --yes wrangler@4.162.0 tail --config site/wrangler.jsonc
 ```
 
 ## 6. Costs and limits

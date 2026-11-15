@@ -4,7 +4,7 @@
 #   two commits after it               ->  1.0.0+2/8fdab8a
 #   before any release tag             ->  0.0.0+<commits>/8fdab8a
 # Prints the version. Used by the Release workflow before deploying; for a
-# deploy by hand, run it, deploy, then `git restore sites/dnabarcode/public`.
+# deploy by hand, run it, deploy, then `git restore site/public`.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
