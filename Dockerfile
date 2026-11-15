@@ -9,7 +9,7 @@
 FROM python:3.13-slim
 
 # The platform version, pinned exactly (the same as in pixi.toml)
-ARG PROKOPTON_ML_VERSION=0.1.0a2
+ARG PROKOPTON_ML_VERSION=0.2.0a1
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
