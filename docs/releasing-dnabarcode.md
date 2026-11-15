@@ -126,15 +126,16 @@ npx --yes wrangler@4.162.0 tail --config sites/dnabarcode/wrangler.jsonc
 ## 6. Costs and limits
 
 - Cloud Run: 1 CPU, 2 GiB, 4 requests at a time, 0 to 2 instances (scale to
-  zero), with extra CPU while an instance starts (`--cpu-boost`, billed only
-  for those seconds). Settings in `infra/deploy/dnabarcode.env`.
-- Cold start: an idle service took about 12 s to answer (November 2026,
-  before CPU boost): about 7 s to start the container and import Python, and
-  5 s to load the bundle. Warm requests take about 0.1 s, or 0.2–0.35 s
-  through the site. Each page wakes the service when it opens
-  (`/api/health`), and the page explains a slow first answer after 4 s.
-  Keeping one instance always running would remove cold starts, but would
-  cost most of the monthly budget.
+  zero). Settings in `infra/deploy/dnabarcode.env`.
+- Cold start: an idle service took 12–13 s to answer (November 2026): 7–10 s
+  to start the container and import Python, and 3–5 s to load the bundle.
+  Warm requests take about 0.1 s, or 0.2–0.35 s through the site. Each page
+  wakes the service when it opens (`/api/health`), and the page explains a
+  slow first answer after 4 s.
+- Startup CPU boost was tried (v1.0.4) and did not shorten the cold start
+  (13.1 s against 12.3 s), so it is turned off (`--no-cpu-boost`; leaving the
+  flag out would keep the previous setting). Keeping one instance always
+  running would remove cold starts, but would cost most of the monthly budget.
 - Firewall rate limit: 5 identifications per 10 seconds per IP (Cloudflare
   dashboard); every identification also needs a Turnstile token.
 - Budget: £10 a month on the `dnabarcode` project (alerts), plus a £10

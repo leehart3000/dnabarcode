@@ -143,7 +143,7 @@ jobs:
           --memory "$MEMORY"
           --concurrency "$CONCURRENCY"
           --min-instances 0
-          --cpu-boost
+          --no-cpu-boost
           --max-instances "$MAX_INSTANCES"
           --timeout "$TIMEOUT"
           --ingress all
