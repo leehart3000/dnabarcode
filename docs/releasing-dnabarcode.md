@@ -22,10 +22,15 @@ release tags" ruleset), so a fix is always a new version.
 
 ```bash
 git switch main && git pull
-git tag -a v1.0.1 -m "DNAbarcode.org 1.0.1"
-git push origin v1.0.1
-gh run watch "$(gh run list --workflow=release.yml --limit 1 --json databaseId --jq '.[0].databaseId')" --exit-status
+scripts/release.sh v1.0.1
 ```
+
+The script stops before tagging unless you are on `main` with no
+uncommitted changes, `main` matches GitHub, the version is new and the
+commit has not been released already. It then waits for the Release
+workflow and checks that the live footer shows the new version. The
+workflow checks the same again (the tag must be on `main`, and its commit
+must not carry another release tag), in case a tag is pushed by hand.
 
 The Cloudflare token used by the release lives only in the `production`
 environment, which only `v*` tags can use.
