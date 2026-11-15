@@ -36,12 +36,12 @@
   </header>
   <main id="content">
     <h1>How it works</h1>
-    <p class="lead">Each sequence goes through up to three models in turn. Each one can stop early with a less specific answer, so a name is only given when the evidence supports it.</p>
+    <p class="lead">Each sequence goes through up to three models in turn. Each step can decline or settle for a less specific answer, so a name is only given when the evidence supports it.</p>
 
     <figure class="flow">
       <svg viewBox="0 0 340 392" role="img" aria-labelledby="flow-title flow-desc">
         <title id="flow-title">How a sequence is identified</title>
-        <desc id="flow-desc">Your sequence is checked, then the marker check finds the COI barcode and its strand, then the router predicts the broad group. Mosquito-like sequences go to the mosquito specialist; everything else gets a broad group only. Either way, the answer comes with how it was reached.</desc>
+        <desc id="flow-desc">Your sequence is checked, then the marker check finds the COI barcode and its strand, then the router predicts the broad group. Sequences that may be from a fly go to the mosquito specialist; everything else gets a broad group only. Either way, the answer comes with how it was reached.</desc>
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
             <path d="M0 0 10 5 0 10z" class="flow-head"/>
@@ -61,7 +61,7 @@
         <text class="flow-note" x="170" y="197" text-anchor="middle">Which broad group (for animals, the order)</text>
         <path class="flow-line" d="M120 206v34" marker-end="url(#arrow)"/>
         <path class="flow-line" d="M220 206v34" marker-end="url(#arrow)"/>
-        <text class="flow-label" x="114" y="228" text-anchor="end">a fly</text>
+        <text class="flow-label" x="114" y="228" text-anchor="end">maybe a fly</text>
         <text class="flow-label" x="226" y="228">anything else</text>
         <rect class="flow-box flow-key" x="10" y="244" width="155" height="76" rx="8"/>
         <text class="flow-title" x="87.5" y="264" text-anchor="middle">3 · Mosquito</text>
@@ -84,15 +84,17 @@
     <p>The first model predicts which of 15 mitochondrial genes the sequence comes from, and which strand it was given as. If it isn't COI, the answer says which gene it looks like, instead of identifying it with the wrong model. For a sequence over 1,000 bases, such as a whole mitochondrial genome, a 600-base window is moved along it to find the COI barcode region, which is then used on its own.</p>
 
     <h2>2. The router</h2>
-    <p>The router predicts the broad group of organism: for animals, the order, such as flies (Diptera) or primates. Like the marker check, it is a machine-learning model that reads a sequence as counts of short "words" of DNA (8 bases long), and its confidence is calibrated: answers given with a probability of 0.9 should be right about 9 times in 10. Sequences that aren't from a fly get the router's answer: a broad group only.</p>
+    <p>The router predicts the broad group of organism: for animals, the order, such as flies (Diptera) or primates. Like the marker check, it is a machine-learning model (logistic regression) that reads a sequence as counts of short "words" of DNA: 6 bases long for the marker check, 8 for the router. Both models' confidence is calibrated, so answers given with a probability of 0.9 should be right about 9 times in 10. At 0.9 or more, the router's answer is "Most likely …"; below that, "Possibly …, but the model is unsure". Unless the mosquito specialist gives a more specific answer, this broad group is the answer.</p>
 
     <h2>3. The mosquito specialist</h2>
-    <p>When the router thinks a fly is at all likely, the mosquito specialist compares the sequence with curated reference sequences of about 1,100 mosquito species and of other flies. It finds the 30 most similar references, aligns the sequence against each one, and measures the percentage of identical bases. Then:</p>
+    <p>When the router gives flies at least a 10% chance, the mosquito specialist compares the sequence with curated reference sequences of about 1,100 mosquito species and of other flies. It picks the 30 most similar references (at most 3 from any one species), aligns the sequence against each one, and measures the percentage of identical bases. A match only counts if it covers at least 80% of the shorter of the two sequences, over at least 100 bases. Then:</p>
     <ul>
       <li><strong>A species</strong> is named only at 99.5% identity or more, and only when no other species is within half a percent.</li>
+      <li><strong>A closest match</strong> is reported instead of a species when another species in our data is as close to that species as the sequence is. The sequence may then be a related species we don't have.</li>
       <li><strong>Several species</strong> are reported together when they are equally close.</li>
       <li><strong>A species complex,</strong> such as the <em>Anopheles gambiae</em> complex, is reported as the complex. Its members can't be told apart with COI, so the answer names the test that can.</li>
-      <li><strong>A genus</strong> is given from 95% identity, and <strong>"a mosquito"</strong> from 90%. Below that, the sequence is reported as not a mosquito.</li>
+      <li><strong>A genus</strong> is given from 95% identity, when the closest matches all share it, and <strong>a mosquito</strong> (the family Culicidae) from 90%. If the closest records have only a genus name, as many unnamed specimens do, the answer says so.</li>
+      <li><strong>Not a mosquito:</strong> if the closest reference is another kind of fly, or nothing is 90% identical, the specialist gives no answer, and the router's broad group stands.</li>
     </ul>
     <p>The thresholds were chosen cautiously. A confidently wrong name costs a user more than a less specific answer.</p>
 
@@ -104,7 +106,7 @@
       <li>Every model was trained, tuned and tested on separate sets of records. The test set includes species that were left out of training entirely, to measure what happens with a species we don't have.</li>
       <li>Each model has a model card with its results and limits. A summary is in <a href="/scope">Scope and limits</a>; the full cards are in the <a href="https://github.com/leehart3000/dnabarcode/tree/main/apps/dnabarcode/model-cards" target="_blank" rel="noopener noreferrer">source <span class="ext-tail">repository<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="sr-only"> (opens in a new tab)</span></a>.</li>
       <li>Before each new version goes live, it must give the expected answer for 13 <a href="https://github.com/leehart3000/dnabarcode/tree/main/apps/dnabarcode/checks" target="_blank" rel="noopener noreferrer">known <span class="ext-tail">sequences<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="sr-only"> (opens in a new tab)</span></a>: for example, a species, a species complex, a whole genome, the reverse strand, a human sequence (a broad group only) and inputs it must decline.</li>
-      <li>The website is tested in a desktop browser and on a small phone screen, for every change and again after every release.</li>
+      <li>The website is tested in a desktop browser and on a small phone screen, for every change to the website and again after every release.</li>
     </ul>
 
     <h2>Privacy</h2>
