@@ -58,10 +58,15 @@ environment, which only `v*` tags can use.
        gs://dnabarcode-bundles/<YYYY-MM-DD> --recursive
    ```
 
-4. In a pull request, set `BUNDLE=` in `infra/deploy/dnabarcode.env` to the
+4. Compare the new bundle's answers with the golden set
+   (`apps/dnabarcode/golden/`): `pixi run golden-check` lists every changed
+   answer. If no answer should change (a new platform version, say), it must
+   report none. If answers are expected to change, review every difference,
+   then record them with `pixi run python scripts/golden.py write --force`.
+5. In a pull request, set `BUNDLE=` in `infra/deploy/dnabarcode.env` to the
    new folder. If answers are expected to change, update or add known-answer
-   checks in `apps/dnabarcode/checks/`.
-5. After merging, make a release (section 0), or deploy only the API and watch:
+   checks in `apps/dnabarcode/checks/`, and include the new golden answers.
+6. After merging, make a release (section 0), or deploy only the API and watch:
 
    ```bash
    gh workflow run deploy-dnabarcode.yml --ref main -f check_public=true
@@ -71,7 +76,7 @@ environment, which only `v*` tags can use.
    The workflow checks the bundle against its manifest, tests the image
    (health, key required, known answers) before pushing it, deploys it by
    digest and checks the live service.
-6. Run the browser tests: `gh workflow run site.yml --ref main`.
+7. Run the browser tests: `gh workflow run site.yml --ref main`.
 
 ## 2. Change the website or gateway
 

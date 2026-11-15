@@ -35,6 +35,8 @@ format-check = "ruff format --check ."
 lint = "ruff check ."
 check-config = "python scripts/check_config.py"
 check = { depends-on = ["format-check", "lint", "check-config"] }
+# Compare the local bundle's answers with the golden set (apps/dnabarcode/golden)
+golden-check = "python scripts/golden.py check"
 
 # The pipeline: each stage runs the platform's command-line tool on this
 # app's config
