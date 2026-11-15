@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How it works · DNAbarcode.org</title>
+  <meta name="description" content="How DNAbarcode.org identifies a COI DNA barcode: a marker check, a router and a mosquito specialist, with cautious answers and checks on every release.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/theme.js"></script>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="brand" href="/" aria-label="DNAbarcode.org home">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect x="4" y="5" width="4" height="22" fill="var(--base-a)"/>
+        <rect x="10" y="5" width="2" height="22" fill="var(--base-c)"/>
+        <rect x="14.5" y="5" width="3" height="22" fill="var(--base-g)"/>
+        <rect x="20" y="5" width="2" height="22" fill="var(--base-t)"/>
+        <rect x="24" y="5" width="4" height="22" fill="var(--base-a)"/>
+      </svg>
+      <span class="wordmark"><span class="dna">DNA</span><b>barcode</b><span class="tld">.org</span></span>
+    </a>
+    <nav aria-label="Main">
+      <a href="/">Identify</a>
+      <a href="/how-it-works" aria-current="page">How it works</a>
+      <a href="/submit">What can I submit?</a>
+      <a href="/finding-coi">Finding the COI region</a>
+      <a href="/scope">Scope and limits</a>
+    </nav>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark mode">
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+  <main id="content">
+    <h1>How it works</h1>
+    <p class="lead">Each sequence goes through up to three models in turn. Each one can stop early with a less specific answer, so a name is only given when the evidence supports it.</p>
+
+    <figure class="flow">
+      <svg viewBox="0 0 340 392" role="img" aria-labelledby="flow-title flow-desc">
+        <title id="flow-title">How a sequence is identified</title>
+        <desc id="flow-desc">Your sequence is checked, then the marker check finds the COI barcode and its strand, then the router predicts the broad group. Mosquito-like sequences go to the mosquito specialist; everything else gets a broad group only. Either way, the answer comes with how it was reached.</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 10 5 0 10z" class="flow-head"/>
+          </marker>
+        </defs>
+        <rect class="flow-box" x="10" y="8" width="320" height="46" rx="8"/>
+        <text class="flow-title" x="170" y="28" text-anchor="middle">Your sequence</text>
+        <text class="flow-note" x="170" y="45" text-anchor="middle">One DNA sequence, 100 to 20,000 bases</text>
+        <path class="flow-line" d="M170 54v20" marker-end="url(#arrow)"/>
+        <rect class="flow-box" x="10" y="78" width="320" height="58" rx="8"/>
+        <text class="flow-title" x="170" y="98" text-anchor="middle">1 · Marker check</text>
+        <text class="flow-note" x="170" y="115" text-anchor="middle">Which mitochondrial gene, on which strand;</text>
+        <text class="flow-note" x="170" y="130" text-anchor="middle">finds the COI barcode in a long sequence</text>
+        <path class="flow-line" d="M170 136v20" marker-end="url(#arrow)"/>
+        <rect class="flow-box" x="10" y="160" width="320" height="46" rx="8"/>
+        <text class="flow-title" x="170" y="180" text-anchor="middle">2 · Router</text>
+        <text class="flow-note" x="170" y="197" text-anchor="middle">Which broad group (for animals, the order)</text>
+        <path class="flow-line" d="M120 206v34" marker-end="url(#arrow)"/>
+        <path class="flow-line" d="M220 206v34" marker-end="url(#arrow)"/>
+        <text class="flow-label" x="114" y="228" text-anchor="end">a fly</text>
+        <text class="flow-label" x="226" y="228">anything else</text>
+        <rect class="flow-box flow-key" x="10" y="244" width="155" height="76" rx="8"/>
+        <text class="flow-title" x="87.5" y="264" text-anchor="middle">3 · Mosquito</text>
+        <text class="flow-title" x="87.5" y="281" text-anchor="middle">specialist</text>
+        <text class="flow-note" x="87.5" y="298" text-anchor="middle">Compares with curated</text>
+        <text class="flow-note" x="87.5" y="313" text-anchor="middle">reference sequences</text>
+        <rect class="flow-box" x="175" y="244" width="155" height="76" rx="8"/>
+        <text class="flow-title" x="252.5" y="264" text-anchor="middle">Everything else</text>
+        <text class="flow-note" x="252.5" y="285" text-anchor="middle">A broad group only,</text>
+        <text class="flow-note" x="252.5" y="300" text-anchor="middle">such as an order</text>
+        <path class="flow-line" d="M87.5 320v18" marker-end="url(#arrow)"/>
+        <path class="flow-line" d="M252.5 320v18" marker-end="url(#arrow)"/>
+        <rect class="flow-box" x="10" y="342" width="320" height="42" rx="8"/>
+        <text class="flow-title" x="170" y="361" text-anchor="middle">The answer</text>
+        <text class="flow-note" x="170" y="377" text-anchor="middle">with how it was reached, step by step</text>
+      </svg>
+    </figure>
+
+    <h2>1. The marker check</h2>
+    <p>The first model predicts which of 15 mitochondrial genes the sequence comes from, and which strand it was given as. If it isn't COI, the answer says which gene it looks like, instead of identifying it with the wrong model. For a sequence over 1,000 bases, such as a whole mitochondrial genome, a 600-base window is moved along it to find the COI barcode region, which is then used on its own.</p>
+
+    <h2>2. The router</h2>
+    <p>The router predicts the broad group of organism: for animals, the order, such as flies (Diptera) or primates. Like the marker check, it is a machine-learning model that reads a sequence as counts of short "words" of DNA (8 bases long), and its confidence is calibrated: answers given with a probability of 0.9 should be right about 9 times in 10. Sequences that aren't from a fly get the router's answer: a broad group only.</p>
+
+    <h2>3. The mosquito specialist</h2>
+    <p>When the router thinks a fly is at all likely, the mosquito specialist compares the sequence with curated reference sequences of about 1,100 mosquito species and of other flies. It finds the 30 most similar references, aligns the sequence against each one, and measures the percentage of identical bases. Then:</p>
+    <ul>
+      <li><strong>A species</strong> is named only at 99.5% identity or more, and only when no other species is within half a percent.</li>
+      <li><strong>Several species</strong> are reported together when they are equally close.</li>
+      <li><strong>A species complex,</strong> such as the <em>Anopheles gambiae</em> complex, is reported as the complex. Its members can't be told apart with COI, so the answer names the test that can.</li>
+      <li><strong>A genus</strong> is given from 95% identity, and <strong>"a mosquito"</strong> from 90%. Below that, the sequence is reported as not a mosquito.</li>
+    </ul>
+    <p>The thresholds were chosen cautiously. A confidently wrong name costs a user more than a less specific answer.</p>
+
+    <h2>The reference data</h2>
+    <p>The references come from MIDORI2, a curated set of mitochondrial sequences from GenBank (release 273). Public databases contain mislabelled records, so each mosquito reference is compared with NCBI's curated RefSeq mitochondrial genomes. Records that are nearly identical to another species' genome, but far from their own species' genome, are left out.</p>
+
+    <h2>How it is measured and kept honest</h2>
+    <ul>
+      <li>Every model was trained, tuned and tested on separate sets of records. The test set includes species that were left out of training entirely, to measure what happens with a species we don't have.</li>
+      <li>Each model has a model card with its results and limits. A summary is in <a href="/scope">Scope and limits</a>; the full cards are in the <a href="https://github.com/leehart3000/dnabarcode/tree/main/apps/dnabarcode/model-cards" target="_blank" rel="noopener noreferrer">source repository<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>.</li>
+      <li>Before each new version goes live, it must give the expected answer for 13 <a href="https://github.com/leehart3000/dnabarcode/tree/main/apps/dnabarcode/checks" target="_blank" rel="noopener noreferrer">known sequences<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>: for example, a species, a species complex, a whole genome, the reverse strand, a human sequence (a broad group only) and inputs it must decline.</li>
+      <li>The website is tested in a desktop browser and on a small phone screen, for every change and again after every release.</li>
+    </ul>
+
+    <h2>Privacy</h2>
+    <p>Sequences are used only to answer the request. They are not stored, and never written to logs. Cloudflare Turnstile checks that each identification comes from a person, without a puzzle in most cases.</p>
+
+    <h2>How it is built</h2>
+    <p>The models are trained in Python with scikit-learn, tracked with MLflow, and served by a FastAPI service on Google Cloud Run. The website and its gateway run on Cloudflare. Training, evaluation, model cards and serving come from <a href="https://github.com/leehart3000/prokoptonml" target="_blank" rel="noopener noreferrer">ProkoptonML<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>, an open MLOps platform. DNAbarcode.org is its first product, and both are open source (see DNAbarcode.org's <a href="https://github.com/leehart3000/dnabarcode" target="_blank" rel="noopener noreferrer">source code<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>).</p>
+  </main>
+  <footer>
+    <p>DNAbarcode.org is a product of <a href="https://github.com/leehart3000/prokoptonml" target="_blank" rel="noopener noreferrer">ProkoptonML<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>, an open MLOps platform by <a href="https://hartsoft.dev" target="_blank" rel="noopener noreferrer">Lee Hart<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>.
+    Answers describe our reference data and this marker; they are not an expert identification.
+    <a href="/how-it-works">How it works</a> · <a href="https://github.com/leehart3000/dnabarcode/blob/main/apps/dnabarcode/model-cards/culicidae.md" target="_blank" rel="noopener noreferrer">Model card<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a> · <a href="https://github.com/leehart3000/dnabarcode" target="_blank" rel="noopener noreferrer">Source code<svg class="ext-icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5h-2v7h7v-2M7 2.5h2.5V5M9.5 2.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a></p>
+    <p>Reference data: MIDORI2 (GenBank release 273; Leray et al. 2022; CC BY 4.0) and NCBI RefSeq.
+    Identifications are protected by Cloudflare Turnstile.</p>
+    <p class="version">Version <span data-version>development</span></p>
+  </footer>
+  <script src="/theme-toggle.js" defer></script>
+</body>
+</html>
