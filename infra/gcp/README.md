@@ -99,8 +99,8 @@ gcloud iam service-accounts add-iam-policy-binding $DEPLOYER --project=$P \
 
 ## 4. First deploy, then make it public and narrow the deployer
 
-`.github/workflows/deploy-dnabarcode.yml` (settings in
-`infra/deploy/dnabarcode.env`) downloads and checks the bundle, builds the
+`.github/workflows/deploy-dnabarcode.yml` (the platform's reusable
+`deploy-cloud-run.yml`, with settings in `infra/deploy/dnabarcode.env`) downloads and checks the bundle, builds the
 image with the platform from PyPI, tests it, pushes it, deploys it by digest
 and checks the live service. The first deploy runs with `check_public` off:
 the service starts private, because the deployer cannot change who may call

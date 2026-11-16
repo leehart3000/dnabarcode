@@ -1,7 +1,9 @@
 # Known-answer checks
 
 A regression set: known sequences sent to every new image before it is
-pushed (see `.github/workflows/deploy-dnabarcode.yml`). Each `<name>.json`
+pushed, by `prokopton-ml check` (see `.github/workflows/deploy-dnabarcode.yml`,
+which calls the platform's deploy workflow). Run them against the local
+bundle with `pixi run known-answers`. Each `<name>.json`
 is an `/identify` request body and `<name>.expected` the answer it must give:
 the answer text, or `declined: <reason>` (an expected file may hold just the
 start of the text). Any change in an answer stops the deploy until the check

@@ -22,10 +22,10 @@ release tags" ruleset), so a fix is always a new version.
 
 ```bash
 git switch main && git pull
-scripts/release.sh v1.0.1
+pixi run release v1.0.1
 ```
 
-The script stops before tagging unless you are on `main` with no
+The command (`prokopton-ml release`, from the platform) stops before tagging unless you are on `main` with no
 uncommitted changes, `main` matches GitHub, the version is new and the
 commit has not been released already. It then waits for the Release
 workflow and checks that the live footer shows the new version. The
@@ -73,9 +73,11 @@ environment, which only `v*` tags can use.
    gh run watch "$(gh run list --workflow=deploy-dnabarcode.yml --limit 1 --json databaseId --jq '.[0].databaseId')" --exit-status
    ```
 
-   The workflow checks the bundle against its manifest, tests the image
-   (health, key required, known answers) before pushing it, deploys it by
-   digest and checks the live service.
+   The workflow (the platform's `deploy-cloud-run.yml`, pinned to a platform
+   release) checks the bundle against its manifest, tests the image (health,
+   key required, and the known answers with `prokopton-ml check`) before
+   pushing it, deploys it by digest and checks the live service. To run the
+   known-answer checks against the local bundle first: `pixi run known-answers`.
 7. Run the browser tests: `gh workflow run site.yml --ref main`.
 
 ## 2. Change the website or gateway

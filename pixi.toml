@@ -24,7 +24,7 @@ uvicorn = ">=0.54.0,<0.55"
 # The platform, pinned exactly (keep in step with PROKOPTON_ML_VERSION in
 # the Dockerfile; `pixi run check` compares them)
 [pypi-dependencies]
-prokopton-ml = { version = "==0.2.0a3", extras = ["serve", "bio"] }
+prokopton-ml = { version = "==0.2.0a4", extras = ["serve", "bio"] }
 
 [feature.dev.dependencies]
 ruff = "*"
@@ -37,6 +37,12 @@ check-config = "python scripts/check_config.py"
 check = { depends-on = ["format-check", "lint", "check-config"] }
 # Compare the local bundle's answers with the golden set (tests/golden)
 golden-check = "python scripts/golden.py check"
+# Run the known-answer checks (tests/known-answers) against the local bundle,
+# as every deploy does against the new image
+known-answers = "prokopton-ml check data/models/dnabarcode/bundle tests/known-answers"
+# pixi run release vX.Y.Z: tag main, follow the Release workflow and check
+# the live footer (see docs/releasing-dnabarcode.md)
+release = "prokopton-ml release --name DNAbarcode.org --check-url https://dnabarcode.org/"
 
 # The pipeline: each stage runs the platform's command-line tool on this
 # app's config
