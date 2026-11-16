@@ -3,7 +3,7 @@ name: Release
 # A v* tag releases DNAbarcode.org: deploy the API (Cloud Run), deploy the
 # website and gateway (Cloudflare) with the version in the footer, run the
 # browser tests against the live site, then record a GitHub Release.
-#   scripts/release.sh v1.0.0   (checks first, then tags and waits)
+#   pixi run release v1.0.0   (checks first, then tags and waits)
 on:
   push:
     tags: ["v*"]

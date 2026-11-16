@@ -1,22 +1,25 @@
 # The DNAbarcode.org API: the ProkoptonML platform from PyPI, serving this
-# product's prebuilt bundle.
+# product's prebuilt bundle (from the platform's templates/Dockerfile).
 #
-# Build from the repository root with the serving bundle in ./bundle (CI
-# downloads it and checks its manifest first):
+# The deploy workflow (the platform's deploy-cloud-run.yml) downloads the
+# bundle into ./bundle, checks it against its manifest and builds from the
+# repository root. To build by hand, with the bundle in ./bundle:
 #   docker build -t dnabarcode-api .
 # Cloud Run sets PORT; locally, docker run -p 8080:8080 dnabarcode-api
 
 FROM python:3.13-slim
 
 # The platform version, pinned exactly (the same as in pixi.toml)
-ARG PROKOPTON_ML_VERSION=0.2.0a3
+ARG PROKOPTON_ML_VERSION=0.2.0a4
+# The name shown in the API docs
+ARG API_TITLE="DNAbarcode.org API"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PROKOPTON_BUNDLE=/srv/bundle \
-    PROKOPTON_API_TITLE="DNAbarcode.org API"
+    PROKOPTON_API_TITLE="${API_TITLE}"
 
 WORKDIR /srv
 

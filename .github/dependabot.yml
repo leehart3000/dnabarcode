@@ -17,6 +17,9 @@ updates:
     # Wait a week after a release before proposing it (supply-chain protection)
     cooldown:
       default-days: 7
+    # The platform's deploy workflow is raised with the platform version, on purpose
+    ignore:
+      - dependency-name: "leehart3000/prokoptonml*"
     groups:
       github-actions:
         patterns: ["*"]
