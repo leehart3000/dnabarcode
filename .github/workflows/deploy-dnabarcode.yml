@@ -26,7 +26,7 @@ permissions:
 jobs:
   deploy:
     name: Cloud Run
-    uses: leehart3000/prokoptonml/.github/workflows/deploy-cloud-run.yml@3bdaee1d75029338dd5b7aad0860c39619574a53 # v0.2.0a4
+    uses: leehart3000/prokoptonml/.github/workflows/deploy-cloud-run.yml@d47e64b72c7efa4619d906615c69564c8990a845 # v0.2.0a5
     with:
       settings: infra/deploy/dnabarcode.env
       checks: tests/known-answers

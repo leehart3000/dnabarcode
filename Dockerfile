@@ -10,7 +10,7 @@
 FROM python:3.13-slim
 
 # The platform version, pinned exactly (the same as in pixi.toml)
-ARG PROKOPTON_ML_VERSION=0.2.0a4
+ARG PROKOPTON_ML_VERSION=0.2.0a5
 # The name shown in the API docs
 ARG API_TITLE="DNAbarcode.org API"
 
