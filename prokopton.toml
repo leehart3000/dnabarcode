@@ -2,6 +2,8 @@
 # Validated against prokopton.ml.config.AppConfig. Any value can be overridden
 # with an environment variable, e.g. PROKOPTON_DATA__PATHS__RAW_DIR=/some/folder
 
+schema = 2
+
 name = "dnabarcode"
 title = "DNA barcoding"
 
@@ -75,12 +77,13 @@ maxrejects = 8
 threads = 8
 chunk_size = 250000
 
-[router]
+[models.router]
+kind = "bio.kmer-classifier"
 # The router predicts the order for animals, and the group for other eukaryotes
 label = "group_order"
 genes = ["CO1"]
 
-[router.sample]
+[models.router.sample]
 salt = "dnabarcode-sample-v1"
 # At most this many records per class, spread across as many species as possible
 train_cap = 2000
@@ -94,7 +97,7 @@ eval_splits = ["val_known", "val_novel"]
 # Leave out novel-set records that have a near-copy in training
 exclude_near_duplicates = true
 
-[router.training]
+[models.router.training]
 # The search has been narrowed in rounds; every round is kept in MLflow.
 #   Round 1 (v1): NB best at alpha 0.01, the smallest tried; logistic
 #     regression poor on unscaled features.
@@ -133,7 +136,7 @@ experiment = "dnabarcode-router"
 registered_model = "dnabarcode-router"
 alias = "candidate"
 
-[router.calibration]
+[models.router.calibration]
 # Confidence is calibrated by length on the validation samples: whole
 # sequences plus one fragment per record (new fragments, not training's).
 # v4 (trained with fragments) was underconfident: on clean novel species,
@@ -142,7 +145,7 @@ fragment_min_length = 75
 fragment_max_length = 600
 threads = 8
 
-[router.evaluation]
+[models.router.evaluation]
 splits = ["test_known", "test_novel"]
 # Also scored separately with and without a near-copy in training
 novel_splits = ["test_novel"]
@@ -154,7 +157,7 @@ ambiguity_edges = [0.0, 0.01, 0.03, 0.05, 0.10]
 confidence_thresholds = [0.5, 0.7, 0.8, 0.9, 0.95, 0.99]
 threads = 8
 
-[router.serving]
+[models.router.serving]
 # From v5's evaluation: at 100 bases, 65% accurate on novel species with
 # calibrated confidence; below that, confidence is too high. Under 300 bases
 # accuracy is noticeably lower, so users are told. At 0.9 confidence, 94% of
@@ -163,7 +166,7 @@ min_length = 100
 short_length = 300
 confident_threshold = 0.9
 
-[router.card]
+[models.router.card]
 output_dir = "model-cards"
 notes = "model-cards/router-notes.md"
 title = "router model card"
@@ -193,7 +196,8 @@ limitations = [
 # The marker classifier: which of the 15 mitochondrial genes a sequence is
 # from. It runs first, and also finds which strand a sequence was given as
 # (by comparing confidence on both strands).
-[marker]
+[models.marker]
+kind = "bio.kmer-classifier"
 label = "gene"
 genes = [
   "CO1", "CO2", "CO3", "Cytb", "A6", "A8",
@@ -201,7 +205,7 @@ genes = [
   "lrRNA", "srRNA",
 ]
 
-[marker.sample]
+[models.marker.sample]
 salt = "dnabarcode-marker-sample-v1"
 # Spread each gene's records across as many orders as possible. v3-v4 tried
 # taking turns between groups of organisms first ("group_order"): fungi did
@@ -216,7 +220,7 @@ max_ambiguous_fraction = 0.10
 eval_splits = ["val_known"]
 exclude_near_duplicates = false
 
-[marker.training]
+[models.marker.training]
 # v2: logistic regression (0.915) beat naive Bayes (0.870 at best), so naive
 # Bayes is left out, and the training data (doubled by the reverse class
 # below) fits in memory
@@ -241,12 +245,12 @@ experiment = "dnabarcode-marker"
 registered_model = "dnabarcode-marker"
 alias = "candidate"
 
-[marker.calibration]
+[models.marker.calibration]
 fragment_min_length = 75
 fragment_max_length = 600
 threads = 8
 
-[marker.evaluation]
+[models.marker.evaluation]
 splits = ["test_known"]
 novel_splits = []
 fragment_lengths = [50, 75, 100, 150, 200, 300, 400, 500]
@@ -257,12 +261,12 @@ confidence_thresholds = [0.5, 0.7, 0.8, 0.9, 0.95, 0.99]
 orientation = true
 threads = 8
 
-[marker.serving]
+[models.marker.serving]
 min_length = 100
 short_length = 300
 confident_threshold = 0.9
 
-[marker.card]
+[models.marker.card]
 output_dir = "model-cards"
 notes = "model-cards/marker-notes.md"
 title = "marker classifier model card"
@@ -287,7 +291,8 @@ limitations = [
 
 # Specialists identify species within one group, by comparing sequences with
 # a reference set (nearest neighbours, then alignment for percent identity)
-[specialists.culicidae]
+[models.culicidae]
+kind = "bio.specialist"
 # Consulted when the router gives Diptera at least the route threshold
 router_label = "Diptera"
 # How answers name a mosquito whose closest records have no species or genus name
@@ -350,7 +355,7 @@ anchor_taxon = "Culicidae"
 anchor_other_identity = 0.97
 anchor_own_identity = 0.95
 
-[specialists.culicidae.genus_groups]
+[models.culicidae.genus_groups]
 Ochlerotatus = "Aedes"
 Stegomyia = "Aedes"
 Finlaya = "Aedes"
@@ -372,7 +377,7 @@ Jarnellius = "Aedes"
 Kompia = "Aedes"
 Lewnielsenius = "Aedes"
 
-[specialists.culicidae.evaluation]
+[models.culicidae.evaluation]
 # Up to 3 records per species in each validation and test set (at most 1,500
 # per set), so species with many records do not dominate
 per_species = 3
@@ -394,11 +399,11 @@ max_background_admitted = 0.005
 
 # Records left out by hand: errors within a genus, which the automatic check
 # (near-identical to another genus) does not judge
-[[specialists.culicidae.excluded]]
+[[models.culicidae.excluded]]
 accession = "KP896564.1"
 reason = "Labelled Aedes albopictus, but 99.6% identical over 733 bases to Ae. aegypti (NC_035159); the two species differ by roughly 10% in COI."
 
-[specialists.culicidae.card]
+[models.culicidae.card]
 output_dir = "model-cards"
 notes = "model-cards/culicidae-notes.md"
 title = "Culicidae specialist model card"
@@ -426,7 +431,7 @@ limitations = [
   "**These results use a reference set drawn from the training split only**, so that the test records stay unseen. The site uses a reference set drawn from every split, which covers more species; its accuracy has not been measured separately.",
 ]
 
-[[specialists.culicidae.complexes]]
+[[models.culicidae.complexes]]
 name = "Anopheles gambiae complex"
 members = [
   "Anopheles gambiae", "Anopheles coluzzii", "Anopheles arabiensis",
@@ -436,7 +441,7 @@ members = [
 resolve = "Confirm with a nuclear assay: an IGS PCR (separates An. arabiensis, An. melas and An. gambiae/coluzzii), a SINE200 PCR (An. gambiae against An. coluzzii), or a multilocus amplicon panel such as ANOSPP."
 reference = "Boddé et al. (2022), eLife 11:e78775; Santolamazza et al. (2008), Malaria Journal 7:163"
 
-[[specialists.culicidae.complexes]]
+[[models.culicidae.complexes]]
 name = "Culex pipiens complex"
 # Culex pallens and the molestus form are often treated as a subspecies or
 # form of Cx. pipiens, but appear as species names in sequence records
@@ -447,7 +452,7 @@ members = [
 resolve = "Confirm with a nuclear assay: an ACE-2 PCR (separates Cx. pipiens, Cx. quinquefasciatus and Cx. australicus), and a CQ11 PCR for the pipiens and molestus forms of Cx. pipiens."
 reference = "Smith & Fonseca (2004), American Journal of Tropical Medicine and Hygiene 70:339-345; Bahnck & Fonseca (2006), American Journal of Tropical Medicine and Hygiene 75:251-255"
 
-[[specialists.culicidae.complexes]]
+[[models.culicidae.complexes]]
 name = "Anopheles maculipennis complex"
 members = [
   "Anopheles maculipennis", "Anopheles messeae", "Anopheles daciae",
@@ -458,7 +463,7 @@ members = [
 resolve = "Confirm with a nuclear assay: a multiplex PCR of the ribosomal ITS2 separates the main Palaearctic members; An. messeae and An. daciae need ITS2 sequencing."
 reference = "Proft, Maier & Kampen (1999), Parasitology Research 85:837-843"
 
-[[specialists.culicidae.complexes]]
+[[models.culicidae.complexes]]
 name = "Anopheles funestus group"
 members = [
   "Anopheles funestus", "Anopheles vaneedeni", "Anopheles parensis",
@@ -490,3 +495,99 @@ region_probability = 0.9
 route_threshold = 0.10
 # Added to declines for other markers, and long sequences without COI
 unsupported_note = "Support for other markers (plant rbcL, fungal ITS and bacterial 16S) is planned."
+
+# The pipeline: its stages, in the order they run (prokopton-ml stages).
+# Added by prokopton-ml migrate-config.
+[pipeline]
+stages = [
+  "ingest",
+  "validate",
+  "split",
+  "leakage",
+  "router-sample",
+  "router-train",
+  "router-calibrate",
+  "router-evaluate",
+  "router-card",
+  "marker-sample",
+  "marker-train",
+  "marker-calibrate",
+  "marker-evaluate",
+  "marker-card",
+  "culicidae-anchors",
+  "culicidae-reference",
+  "culicidae-evaluate",
+  "culicidae-card",
+  "bundle",
+]
+
+[stages.ingest]
+kind = "bio.ingest"
+
+[stages.validate]
+kind = "bio.validate"
+
+[stages.split]
+kind = "bio.split"
+
+[stages.leakage]
+kind = "bio.leakage"
+
+[stages.router-sample]
+kind = "bio.classifier-sample"
+model = "router"
+
+[stages.router-train]
+kind = "bio.classifier-train"
+model = "router"
+
+[stages.router-calibrate]
+kind = "bio.classifier-calibrate"
+model = "router"
+
+[stages.router-evaluate]
+kind = "bio.classifier-evaluate"
+model = "router"
+
+[stages.router-card]
+kind = "bio.classifier-card"
+model = "router"
+
+[stages.marker-sample]
+kind = "bio.classifier-sample"
+model = "marker"
+
+[stages.marker-train]
+kind = "bio.classifier-train"
+model = "marker"
+
+[stages.marker-calibrate]
+kind = "bio.classifier-calibrate"
+model = "marker"
+
+[stages.marker-evaluate]
+kind = "bio.classifier-evaluate"
+model = "marker"
+
+[stages.marker-card]
+kind = "bio.classifier-card"
+model = "marker"
+
+[stages.culicidae-anchors]
+kind = "bio.specialist-anchors"
+model = "culicidae"
+
+[stages.culicidae-reference]
+kind = "bio.specialist-reference"
+model = "culicidae"
+
+[stages.culicidae-evaluate]
+kind = "bio.specialist-evaluate"
+model = "culicidae"
+
+[stages.culicidae-card]
+kind = "bio.specialist-card"
+model = "culicidae"
+
+[stages.bundle]
+kind = "core.bundle"
