@@ -154,3 +154,21 @@ npx --yes wrangler@4.162.0 tail --config site/wrangler.jsonc
   Cloud Run spend cap.
 - Storage: old bundles and images are cleaned up as described in
   [`infra/gcp/README.md`](../infra/gcp/README.md).
+
+## 7. Move to a new platform version
+
+The platform (`prokopton-ml`) is pinned in three places, which
+`pixi run check` keeps in step: `pixi.toml`, the `PROKOPTON_ML_VERSION`
+`ARG` in the `Dockerfile`, and the deploy workflow
+(`.github/workflows/deploy-dnabarcode.yml`), which calls the platform's
+`deploy-cloud-run.yml` by its release's commit, with the tag as a comment:
+
+```bash
+V=0.2.0a5
+SHA=$(gh api repos/leehart3000/prokoptonml/commits/v$V --jq .sha)
+# then set ==$V in pixi.toml, ARG PROKOPTON_ML_VERSION=$V in the Dockerfile,
+# and deploy-cloud-run.yml@$SHA # v$V in the workflow
+pixi install && pixi run check && pixi run known-answers && pixi run golden-check
+```
+
+Dependabot leaves the platform alone, so it is only raised on purpose.
