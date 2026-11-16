@@ -1,18 +1,23 @@
 # dnabarcode.org: DNA barcode identification, built on ProkoptonML.
 # Validated against prokopton.ml.config.AppConfig. Any value can be overridden
-# with an environment variable, e.g. PROKOPTON_DATA__PATHS__RAW_DIR=/some/folder
+# with an environment variable, e.g. PROKOPTON_BIO__PATHS__RAW_DIR=/some/folder
 
-schema = 3
+schema = 4
 
 name = "dnabarcode"
 title = "DNA barcoding"
 
-[data.source]
+[data]
+release = "GB273"
+
+[paths]
+models_dir = "data/models/dnabarcode"
+
+[bio.source]
 # MIDORI2 reference databases, GenBank release 273 (CC BY 4.0).
 # Cite: https://doi.org/10.5281/zenodo.22685701 and Leray et al. (2022),
 # Environmental DNA 4: 894-907, https://doi.org/10.1002/edn3.303
 type = "midori2"
-release = "GB273"
 doi = "10.5281/zenodo.22685701"
 licence = "CC-BY-4.0"
 archive_url = "https://zenodo.org/records/22685701/files/MIDORI2_GB273_SINTAX_sp.zip?download=1"
@@ -27,16 +32,15 @@ genes = [
   "lrRNA", "srRNA",
 ]
 
-[data.paths]
+[bio.paths]
 raw_dir = "data/raw/midori2_gb273"
 interim_dir = "data/interim/dnabarcode"
 processed_dir = "data/processed/dnabarcode"
 splits_dir = "data/splits/dnabarcode"
 leakage_dir = "data/leakage/dnabarcode"
 samples_dir = "data/samples/dnabarcode"
-models_dir = "data/models/dnabarcode"
 
-[validation]
+[bio.validation]
 # Reviewed phylum -> kingdom table (see curated/README.md)
 phylum_reference = "curated/phylum_lineages_gb273.tsv"
 min_length = 100
@@ -49,7 +53,7 @@ ambiguity_report_thresholds = [0.0, 0.01, 0.05, 0.10]
 short_length = 200
 top_shared_examples = 10
 
-[split]
+[bio.split]
 # Changing the salt reshuffles every split; record it with any published results
 salt = "dnabarcode-gb273-v1"
 # Whole named species held out, to measure performance on species not in training
@@ -63,7 +67,7 @@ novel_species_genes = ["CO1"]
 # Families reported separately, e.g. for planned specialists
 report_families = ["Culicidae"]
 
-[leakage]
+[bio.leakage]
 # List novel-set records that have a near-identical (>=99%) training sequence,
 # so evaluation can exclude them from novel-species scores. Settings were chosen
 # with analysis/03_leakage_audit.py (see analysis/README.md): about 95% recall
