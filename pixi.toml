@@ -24,7 +24,7 @@ uvicorn = ">=0.54.0,<0.55"
 # The platform, pinned exactly (keep in step with PROKOPTON_ML_VERSION in
 # the Dockerfile; `pixi run check` compares them)
 [pypi-dependencies]
-prokopton-ml = { version = "==0.2.0a1", extras = ["serve", "bio"] }
+prokopton-ml = { version = "==0.2.0a2", extras = ["serve", "bio"] }
 
 [feature.dev.dependencies]
 ruff = "*"
@@ -41,25 +41,27 @@ golden-check = "python scripts/golden.py check"
 # The pipeline: each stage runs the platform's command-line tool on this
 # app's config
 [tasks]
-dnabarcode-ingest = "prokopton-ml ingest prokopton.toml"
-dnabarcode-validate = "prokopton-ml validate prokopton.toml"
-dnabarcode-split = "prokopton-ml split prokopton.toml"
-dnabarcode-leakage = "prokopton-ml leakage prokopton.toml"
-dnabarcode-sample = "prokopton-ml sample prokopton.toml"
-dnabarcode-train = "prokopton-ml train prokopton.toml"
-dnabarcode-calibrate = "prokopton-ml calibrate prokopton.toml"
-dnabarcode-evaluate = "prokopton-ml evaluate prokopton.toml"
-dnabarcode-card = "prokopton-ml card prokopton.toml"
-dnabarcode-marker-sample = "prokopton-ml sample prokopton.toml --model marker"
-dnabarcode-marker-train = "prokopton-ml train prokopton.toml --model marker"
-dnabarcode-marker-calibrate = "prokopton-ml calibrate prokopton.toml --model marker"
-dnabarcode-marker-evaluate = "prokopton-ml evaluate prokopton.toml --model marker"
-dnabarcode-marker-card = "prokopton-ml card prokopton.toml --model marker"
-dnabarcode-culicidae-anchors = "prokopton-ml anchors prokopton.toml --specialist culicidae"
-dnabarcode-culicidae-reference = "prokopton-ml reference prokopton.toml --specialist culicidae"
-dnabarcode-culicidae-evaluate = "prokopton-ml evaluate prokopton.toml --specialist culicidae"
-dnabarcode-culicidae-card = "prokopton-ml card prokopton.toml --specialist culicidae"
-dnabarcode-bundle = "prokopton-ml bundle prokopton.toml"
+# Pipeline stages (prokopton-ml stages lists them, with when each last ran)
+dnabarcode-stages = "prokopton-ml stages"
+dnabarcode-ingest = "prokopton-ml run ingest"
+dnabarcode-validate = "prokopton-ml run validate"
+dnabarcode-split = "prokopton-ml run split"
+dnabarcode-leakage = "prokopton-ml run leakage"
+dnabarcode-sample = "prokopton-ml run router-sample"
+dnabarcode-train = "prokopton-ml run router-train"
+dnabarcode-calibrate = "prokopton-ml run router-calibrate"
+dnabarcode-evaluate = "prokopton-ml run router-evaluate"
+dnabarcode-card = "prokopton-ml run router-card"
+dnabarcode-marker-sample = "prokopton-ml run marker-sample"
+dnabarcode-marker-train = "prokopton-ml run marker-train"
+dnabarcode-marker-calibrate = "prokopton-ml run marker-calibrate"
+dnabarcode-marker-evaluate = "prokopton-ml run marker-evaluate"
+dnabarcode-marker-card = "prokopton-ml run marker-card"
+dnabarcode-culicidae-anchors = "prokopton-ml run culicidae-anchors"
+dnabarcode-culicidae-reference = "prokopton-ml run culicidae-reference"
+dnabarcode-culicidae-evaluate = "prokopton-ml run culicidae-evaluate"
+dnabarcode-culicidae-card = "prokopton-ml run culicidae-card"
+dnabarcode-bundle = "prokopton-ml run bundle"
 dnabarcode-serve = { cmd = "uvicorn --factory prokopton.ml.serving.app:create_app_from_env --port 8080", env = { PROKOPTON_BUNDLE = "data/models/dnabarcode/bundle", PROKOPTON_API_TITLE = "DNAbarcode.org API" } }
 
 [environments]
