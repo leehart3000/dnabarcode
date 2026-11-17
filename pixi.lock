@@ -313,7 +313,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/werkzeug-3.1.9-pyh5ded981_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.2-pyh5ded981_0.conda
       - pypi: https://files.pythonhosted.org/packages/ba/f5/8ad2a46ca09633b20dc6d942d6367660c6fb9eb03c6e4267fa6b2f55a9a7/prokopton-0.1.0a1-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/c9/41/498fafefc3563d8b6d81e8f59aa10f014b90fecda6c56e092cedb8cd084c/prokopton_ml-0.2.0a6-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/ed/7f/6dbeebb7dd3f11afe498e07c6c8617a72e76400410a71255c47a5d80b64f/prokopton_ml-0.2.0-py3-none-any.whl
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -592,7 +592,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zlib-ng-2.3.3-h646e873_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zstd-1.5.7-hbc1a06c_7.conda
       - pypi: https://files.pythonhosted.org/packages/ba/f5/8ad2a46ca09633b20dc6d942d6367660c6fb9eb03c6e4267fa6b2f55a9a7/prokopton-0.1.0a1-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/c9/41/498fafefc3563d8b6d81e8f59aa10f014b90fecda6c56e092cedb8cd084c/prokopton_ml-0.2.0a6-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/ed/7f/6dbeebb7dd3f11afe498e07c6c8617a72e76400410a71255c47a5d80b64f/prokopton_ml-0.2.0-py3-none-any.whl
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -871,7 +871,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - pypi: https://files.pythonhosted.org/packages/ba/f5/8ad2a46ca09633b20dc6d942d6367660c6fb9eb03c6e4267fa6b2f55a9a7/prokopton-0.1.0a1-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/c9/41/498fafefc3563d8b6d81e8f59aa10f014b90fecda6c56e092cedb8cd084c/prokopton_ml-0.2.0a6-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/ed/7f/6dbeebb7dd3f11afe498e07c6c8617a72e76400410a71255c47a5d80b64f/prokopton_ml-0.2.0-py3-none-any.whl
   prod:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -1167,7 +1167,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/werkzeug-3.1.9-pyh5ded981_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.2-pyh5ded981_0.conda
       - pypi: https://files.pythonhosted.org/packages/ba/f5/8ad2a46ca09633b20dc6d942d6367660c6fb9eb03c6e4267fa6b2f55a9a7/prokopton-0.1.0a1-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/c9/41/498fafefc3563d8b6d81e8f59aa10f014b90fecda6c56e092cedb8cd084c/prokopton_ml-0.2.0a6-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/ed/7f/6dbeebb7dd3f11afe498e07c6c8617a72e76400410a71255c47a5d80b64f/prokopton_ml-0.2.0-py3-none-any.whl
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -1445,7 +1445,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zlib-ng-2.3.3-h646e873_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zstd-1.5.7-hbc1a06c_7.conda
       - pypi: https://files.pythonhosted.org/packages/ba/f5/8ad2a46ca09633b20dc6d942d6367660c6fb9eb03c6e4267fa6b2f55a9a7/prokopton-0.1.0a1-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/c9/41/498fafefc3563d8b6d81e8f59aa10f014b90fecda6c56e092cedb8cd084c/prokopton_ml-0.2.0a6-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/ed/7f/6dbeebb7dd3f11afe498e07c6c8617a72e76400410a71255c47a5d80b64f/prokopton_ml-0.2.0-py3-none-any.whl
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -1723,7 +1723,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - pypi: https://files.pythonhosted.org/packages/ba/f5/8ad2a46ca09633b20dc6d942d6367660c6fb9eb03c6e4267fa6b2f55a9a7/prokopton-0.1.0a1-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/c9/41/498fafefc3563d8b6d81e8f59aa10f014b90fecda6c56e092cedb8cd084c/prokopton_ml-0.2.0a6-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/ed/7f/6dbeebb7dd3f11afe498e07c6c8617a72e76400410a71255c47a5d80b64f/prokopton_ml-0.2.0-py3-none-any.whl
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
   build_number: 20
@@ -11587,10 +11587,10 @@ packages:
   requires_dist:
   - pydantic>=2.11,<3
   requires_python: '>=3.13,<3.14'
-- pypi: https://files.pythonhosted.org/packages/c9/41/498fafefc3563d8b6d81e8f59aa10f014b90fecda6c56e092cedb8cd084c/prokopton_ml-0.2.0a6-py3-none-any.whl
+- pypi: https://files.pythonhosted.org/packages/ed/7f/6dbeebb7dd3f11afe498e07c6c8617a72e76400410a71255c47a5d80b64f/prokopton_ml-0.2.0-py3-none-any.whl
   name: prokopton-ml
-  version: 0.2.0a6
-  sha256: 5942d91061df7e14f860ca04fe6ba073d5cd36404fbdba7337f01447ddfc60ee
+  version: 0.2.0
+  sha256: f1d1d8b8e4be4e36796bbaa6ff163c1e9b9ab6301b81f2391ea901fb223e5a50
   requires_dist:
   - mlflow>=3.1,<4
   - numpy>=2
